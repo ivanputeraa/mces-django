@@ -1,0 +1,21 @@
+{% extends 'estimator/base.html' %}
+
+{% load bootstrap4 %}
+
+{% block title %}Upload File{% endblock %}
+
+{% block content %}
+    <h1 class="mt-5">Upload File</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {# Source: https://simpleisbetterthancomplex.com/tips/2016/09/06/django-tip-14-messages-framework.html #}
+        {% include 'estimator/partials/messages.html' %}
+
+        {% bootstrap_form form %}
+        <input class="btn btn-primary" type="submit" value="Save" />
+        <a href="{% url 'estimator:file-list' %}" class="btn btn-light" >Cancel</a>
+    </form>
+
+{% endblock %}

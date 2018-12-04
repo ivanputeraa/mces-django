@@ -1,0 +1,46 @@
+{% extends 'estimator/base.html' %}
+
+{% block title %}File List{% endblock %}
+
+{% block content %}
+    <h1 class="mt-5">File List</h1>
+
+    <a href="{% url 'estimator:file-create' %}" class="btn btn-primary float-right" >Upload File</a>
+    <br><br>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">File Name</th>
+            <th scope="col">Last Modified</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if file_list %}
+            {% for file in file_list %}
+                <tr>
+                    <th scope="row">{{ file.id }}</th>
+                    <td>{{ file.title }}</td>
+                    <td>{{ file.last_modified }}</td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Select
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+{#                                <a href="" class="dropdown-item">#}
+{#                                    Analyze</a>#}
+{#                                <a href="{% url 'estimator:file-update' file.pk %}" class="dropdown-item">#}
+{#                                    Update</a>#}
+                                <a href="{% url 'estimator:file-delete' file.pk %}" class="dropdown-item">
+                                    Delete
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+{% endblock %}

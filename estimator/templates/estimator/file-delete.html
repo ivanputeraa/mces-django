@@ -1,0 +1,14 @@
+{% extends 'estimator/base.html' %}
+
+{% block title %}Delete File{% endblock %}
+
+{% block content %}
+    <h1 class="mt-5">Delete File</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <p>Are you sure you want to delete {{ object }}?</p>
+        <button class="btn btn-danger">Delete</button>
+        <a href="{% url 'estimator:file-list' %}" class="btn btn-light" >Cancel</a>
+    </form>
+{% endblock %}
