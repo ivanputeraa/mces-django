@@ -106,10 +106,10 @@ DATABASES = {
             # Tell MySQLdb to connect with 'big5' character set
             'charset': 'big5',
         },
-        # Tell Django to build the test database with the 'utf8mb4' character set
+        # Tell Django to build the test database with the 'big5' character set
         'TEST': {
-            'CHARSET': 'utf8mb4',
-            'COLLATION': 'utf8mb4_unicode_ci',
+            'CHARSET': 'big5',
+            'COLLATION': 'big5_chinese_ci',
         }
     }
 }

@@ -1,17 +1,20 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, HttpResponseRedirect
+from django.shortcuts import render, redirect, HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.http import JsonResponse
 from django.views.generic import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+from django.core import serializers
 
 from .forms import *
 from .models import *
 from datetime import datetime
+from itertools import chain
 
 import datetime
 import pandas as pd
+import json
 
 class IndexView(View):
     def get(self, request):
@@ -244,7 +247,7 @@ class TrendView(View):
         return render(request, 'estimator/trend.html', {'form': form})
 
 @csrf_exempt
-def get_machine_trends(request):
+def get_machine_trends_and_maintenance(request):
     if request.is_ajax():
         # Get data sent using ajax
         start_date_str = request.GET.get('start_date', None)
@@ -261,13 +264,21 @@ def get_machine_trends(request):
         start_week = start_date.isocalendar()[1]
         end_week = end_date.isocalendar()[1]
 
-        machine_trends = Report.objects.filter(machine=machine, week__range=(start_week, end_week), is_panels=is_panels) \
+        machine_trends = Report.objects.filter(machine=machine, week__range=(start_week, end_week), is_panels=is_panels)\
             .order_by('week') \
             .values('week','yield_rate')
 
-        if machine_trends:
-            response = list(machine_trends)
-            return JsonResponse(response, safe=False)
+        machine_maintenance = Maintenance_History.objects.filter(machine=machine,
+                                                                 check_in_time__range=(start_date, end_date))\
+            .order_by('check_in_time')\
+            .values('description')
+
+        response = json.dumps({
+            'machine_trends': list(machine_trends),
+            'machine_maintenance': list(machine_maintenance),
+        })
+
+        return JsonResponse(response, content_type='application/json', safe=False)
 
 def machine_autocomplete(request):
     if request.is_ajax():

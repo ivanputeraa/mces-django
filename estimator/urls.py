@@ -21,7 +21,7 @@ urlpatterns = [
     re_path(r'^report/list/$', views.ReportList.as_view(), name='report-list'),
 
     # AJAX URLs
-    re_path(r'^ajax/get-machine-trends/$', views.get_machine_trends, name='get-machine-trends'),
+    re_path(r'^ajax/get-machine-trends/$', views.get_machine_trends_and_maintenance, name='get-machine-trends-and-maintenance'),
     re_path(r'^ajax/machine-autocomplete/$', views.machine_autocomplete, name='machine-autocomplete'),
 ]
 

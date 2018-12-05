@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import FileExtensionValidator
 
 class GBOM(models.Model):
-    gbom = models.TextField(max_length=255, null=True)
+    GBOM = models.TextField(max_length=50, null=True)
     station = models.TextField(max_length=255, null=True)
     station_number = models.TextField(max_length=255, null=True)
     outsourcing = models.TextField(max_length=255, null=True)
@@ -11,14 +11,14 @@ class GBOM(models.Model):
 
     class Meta:
         verbose_name = 'GBOM'
-        verbose_name_plural = 'GBOMs'
+        verbose_name_plural = 'GBOM'
 
     def __str__(self):
         return self.gbom
 
 class LOT(models.Model):
     LOT = models.CharField(max_length=50)
-    GBOM = models.ForeignKey(to=GBOM, on_delete=models.CASCADE)
+    GBOM = models.CharField(max_length=50)
 
     class Meta:
         verbose_name_plural = 'LOT'
@@ -27,8 +27,11 @@ class LOT(models.Model):
 class Machine(models.Model):
     machine = models.CharField(max_length=6)
     type = models.CharField(max_length=10)
-    GBOM = models.ForeignKey(to=GBOM, on_delete=models.CASCADE)
-    LOT = models.ForeignKey(to=LOT, on_delete=models.CASCADE)
+    GBOM = models.CharField(max_length=50)
+    LOT = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.machine
 
 class Report(models.Model):
     REPORT_TYPE_CHOICES = (
@@ -49,6 +52,7 @@ class Report(models.Model):
     def __str__(self):
         return "(Week {0}) {1}".format(self.week, self.machine)
 
+# ALTER TABLE estimator_maintenance_history CONVERT TO CHARACTER SET big5 COLLATE big5_chinese_ci;
 class Maintenance_History(models.Model):
     machine = models.TextField(max_length=6)
     check_in_time = models.DateTimeField()

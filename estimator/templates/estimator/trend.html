@@ -18,32 +18,6 @@
     <script>
         // A $( document ).ready() block.
         $( document ).ready(function() {
-            
-            {# Trend form submission handler #}
-            $('#trend_form').submit(function (event) {
-                event.preventDefault();
-
-                var form = $(this).closest("form");
-                $.ajax({
-                    url: "{% url 'estimator:get-machine-trends' %}",
-                    data: form.serialize(),
-                    dataType: 'json',
-                    success: function (data) {
-                        console.log(data);
-
-                        {# Source: https://stackoverflow.com/questions/22726410/how-to-use-ajax-call-to-populate-line-graph-in-highcharts#}
-                        chart_data = $.map(data, function (value) {
-                            return {x: value['week'], y: value['yield_rate']};
-                        });
-
-                        renderChart(chart_data);
-                    }, error: function(error) {
-                        $('#trend_chart').hide()
-                        alert("No data found! Please check your input parameters!")
-                    }
-                });
-                return false;
-            });
 
             {# Machine charfield autocomplete function #}
             {# Source: https://stackoverflow.com/questions/5074329/django-jquery-and-autocomplete #}
@@ -71,6 +45,54 @@
             });
 
             $('.ui-autocomplete').css('list-style-type', 'none').css('text-decoration', 'none')
+
+            {# Trend form submission handler #}
+            $('#trend_form').submit(function (event) {
+                event.preventDefault();
+
+                var form = $(this).closest("form");
+                $.ajax({
+                    url: "{% url 'estimator:get-machine-trends-and-maintenance' %}",
+                    data: form.serialize(),
+                    dataType: 'json',
+                    success: function (response) {
+                        data = jQuery.parseJSON(response)
+                        {#console.log(data)#}
+
+                        $.each(data, function (key, value) {
+                            if (key == 'machine_trends') {
+                                $.each(value, function (key, value) {
+                                    console.log(key, value)
+                                    trend_data =  {
+                                        x: value['week'],
+                                        y: value['yield_rate']
+                                    }
+                                })
+                            } else if (key == 'machine_maintenance') {
+                                 $.each(value, function (key, value) {
+                                    console.log(key, value)
+                                     maintenance_data =  {
+                                        x: value['desc']
+                                    }
+                                })
+                            }
+                        })
+
+                        {# Source: https://stackoverflow.com/questions/22726410/how-to-use-ajax-call-to-populate-line-graph-in-highcharts#}
+                        {#                        chart_data = $.map(data, function (value) {#}
+                        {#                            return {x: value['week'], y: value['yield_rate']};#}
+                        {#                        });#}
+                        {#                        #}
+                        {#                        #}
+                        {##}
+                        {#                        renderChart(chart_data);#}
+                    }, error: function(error) {
+                        $('#trend_chart').hide()
+                        alert("No data found! Please check your input parameters!")
+                    }
+                });
+                return false;
+            });
 
             {# Line chart rendering function #}
             {# https://canvasjs.com/javascript-charts/solid-dashed-line-chart/ #}
