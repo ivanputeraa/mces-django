@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4bb9aa1e-da2d-4fc2-aa3c-205a8e174e2b" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/estimator/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/estimator/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/estimator/templates/estimator/trend.html" beforeDir="false" afterPath="$PROJECT_DIR$/estimator/templates/estimator/trend.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/estimator/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/estimator/views.py" afterDir="false" />
     </list>
@@ -57,16 +56,25 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/estimator/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="131">
-              <caret line="285" column="79" selection-start-line="285" selection-start-column="79" selection-end-line="285" selection-end-column="79" />
+            <state relative-caret-position="173">
+              <caret line="281" column="54" selection-start-line="281" selection-start-column="54" selection-end-line="281" selection-end-column="54" />
               <folding>
                 <element signature="e#0#57#0" expanded="true" />
-                <marker date="1544093733421" expanded="true" signature="679:777" ph="..." />
-                <marker date="1544093733421" expanded="true" signature="980:11497" ph="..." />
-                <marker date="1544093733421" expanded="true" signature="12193:12379" ph="..." />
-                <marker date="1544093733421" expanded="true" signature="12401:12402" ph="..." />
-                <marker date="1544093733421" expanded="true" signature="14250:14251" ph="..." />
+                <marker date="1544094837929" expanded="true" signature="679:777" ph="..." />
+                <marker date="1544094837929" expanded="true" signature="980:11497" ph="..." />
+                <marker date="1544094837929" expanded="true" signature="12193:12379" ph="..." />
+                <marker date="1544094837929" expanded="true" signature="12401:12402" ph="..." />
+                <marker date="1544094837929" expanded="true" signature="14555:14556" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/estimator/templates/estimator/trend.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="746">
+              <caret line="77" column="52" selection-start-line="77" selection-start-column="52" selection-end-line="77" selection-end-column="52" />
             </state>
           </provider>
         </entry>
@@ -262,12 +270,12 @@
       <workItem from="1542956871321" duration="52600000" />
       <workItem from="1543482118659" duration="1000" />
       <workItem from="1543482471681" duration="32577000" />
-      <workItem from="1543839657001" duration="57199000" />
+      <workItem from="1543839657001" duration="58287000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="142490000" />
+    <option name="totallyTimeSpent" value="143578000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -625,13 +633,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/estimator/templates/estimator/trend.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="431">
-          <caret line="77" column="46" selection-start-line="77" selection-start-column="46" selection-end-line="77" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
     <entry file="das://8e9a89ea-d55b-479f-996a-f1a7f4a3dcc7/schema/mces_dev/table/estimator_maintenance_history">
       <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
         <state>
@@ -639,17 +640,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/estimator/templates/estimator/trend.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="746">
+          <caret line="77" column="52" selection-start-line="77" selection-start-column="52" selection-end-line="77" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/estimator/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="131">
-          <caret line="285" column="79" selection-start-line="285" selection-start-column="79" selection-end-line="285" selection-end-column="79" />
+        <state relative-caret-position="173">
+          <caret line="281" column="54" selection-start-line="281" selection-start-column="54" selection-end-line="281" selection-end-column="54" />
           <folding>
             <element signature="e#0#57#0" expanded="true" />
-            <marker date="1544093733421" expanded="true" signature="679:777" ph="..." />
-            <marker date="1544093733421" expanded="true" signature="980:11497" ph="..." />
-            <marker date="1544093733421" expanded="true" signature="12193:12379" ph="..." />
-            <marker date="1544093733421" expanded="true" signature="12401:12402" ph="..." />
-            <marker date="1544093733421" expanded="true" signature="14250:14251" ph="..." />
+            <marker date="1544094837929" expanded="true" signature="679:777" ph="..." />
+            <marker date="1544094837929" expanded="true" signature="980:11497" ph="..." />
+            <marker date="1544094837929" expanded="true" signature="12193:12379" ph="..." />
+            <marker date="1544094837929" expanded="true" signature="12401:12402" ph="..." />
+            <marker date="1544094837929" expanded="true" signature="14555:14556" ph="..." />
           </folding>
         </state>
       </provider>

@@ -279,16 +279,21 @@ def get_machine_trends_and_maintenance(request):
             filter(machine=machine, check_in_week__range=(start_week, end_week)). \
             annotate(occurrence=Count('check_in_week', distinct=True))
 
+        # Count machine occurrences which has the same check_in_week
         distinct_machine_maintenance = collections.Counter(item['check_in_week'] for item in list(machine_maintenance))
 
+        # Map distinct_machine_maintenance result into an array of dicts
         maintenance_data = []
         for key, value in distinct_machine_maintenance.items():
             maintenance_data.append({'check_in_week': key, 'occurrence':value})
-        print(maintenance_data)
+
+        # Sort maintenance_data by check_in_week
+        sorted_maintenance_data = sorted(list(maintenance_data), key=lambda k: k['check_in_week'])
+        print(sorted_maintenance_data)
 
         response = json.dumps({
             'trends_data': list(machine_trends),
-            'maintenance_data': maintenance_data,
+            'maintenance_data': sorted_maintenance_data,
         })
 
         return JsonResponse(response, content_type='application/json', safe=False)
