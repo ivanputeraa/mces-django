@@ -6,15 +6,18 @@ from django.views.generic import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.core import serializers
+from django.db.models import Count, Q, Sum
 
 from .forms import *
 from .models import *
 from datetime import datetime
 from itertools import chain
+from collections import Counter
 
 import datetime
 import pandas as pd
 import json
+import collections
 
 class IndexView(View):
     def get(self, request):
@@ -124,9 +127,13 @@ def file_create(request):
                     replace_parts_list = df['備品需求'].values.copy()
 
                     for counter in range(0, len(df) - 1):  # Exclude last row
+                        check_in_time = str(check_in_time_list[counter]).replace('/', '-')
+                        check_in_week = datetime.datetime.strptime(check_in_time, '%Y-%m-%d %H:%M:%S').isocalendar()[1] # Convert check_in_time into week
+
                         instance = Maintenance_History(
                             machine=str(machine_list[counter]),
-                            check_in_time=str(check_in_time_list[counter]).replace('/', '-'),
+                            check_in_time=check_in_time,
+                            check_in_week=check_in_week,
                             employee_id=str(employee_id_list[counter]).replace('.0', ''),
                             operation_class=str(operation_class_list[counter]),
                             major_code=str(major_code_list[counter]),
@@ -264,18 +271,24 @@ def get_machine_trends_and_maintenance(request):
         start_week = start_date.isocalendar()[1]
         end_week = end_date.isocalendar()[1]
 
-        machine_trends = Report.objects.filter(machine=machine, week__range=(start_week, end_week), is_panels=is_panels)\
-            .order_by('week') \
-            .values('week','yield_rate')
+        machine_trends = Report.objects.values('week','yield_rate'). \
+            filter(machine=machine, week__range=(start_week, end_week), is_panels=is_panels). \
+            order_by('week')
 
-        machine_maintenance = Maintenance_History.objects.filter(machine=machine,
-                                                                 check_in_time__range=(start_date, end_date))\
-            .order_by('check_in_time')\
-            .values('description')
+        machine_maintenance = Maintenance_History.objects.values('check_in_week'). \
+            filter(machine=machine, check_in_week__range=(start_week, end_week)). \
+            annotate(occurrence=Count('check_in_week', distinct=True))
+
+        distinct_machine_maintenance = collections.Counter(item['check_in_week'] for item in list(machine_maintenance))
+
+        maintenance_data = []
+        for key, value in distinct_machine_maintenance.items():
+            maintenance_data.append({'check_in_week': key, 'occurrence':value})
+        print(maintenance_data)
 
         response = json.dumps({
-            'machine_trends': list(machine_trends),
-            'machine_maintenance': list(machine_maintenance),
+            'trends_data': list(machine_trends),
+            'maintenance_data': maintenance_data,
         })
 
         return JsonResponse(response, content_type='application/json', safe=False)

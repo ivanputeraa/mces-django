@@ -50,6 +50,8 @@
             $('#trend_form').submit(function (event) {
                 event.preventDefault();
 
+                trend_data = []
+                maintenance_data = []
                 var form = $(this).closest("form");
                 $.ajax({
                     url: "{% url 'estimator:get-machine-trends-and-maintenance' %}",
@@ -60,23 +62,23 @@
                         {#console.log(data)#}
 
                         $.each(data, function (key, value) {
-                            if (key == 'machine_trends') {
+                            if (key == 'trends_data') {
                                 $.each(value, function (key, value) {
-                                    console.log(key, value)
-                                    trend_data =  {
-                                        x: value['week'],
-                                        y: value['yield_rate']
-                                    }
+                                    {#console.log(key, value)#}
+                                    trend_data.push({'x': value['week'], 'y': value['yield_rate']})
                                 })
-                            } else if (key == 'machine_maintenance') {
-                                 $.each(value, function (key, value) {
-                                    console.log(key, value)
-                                     maintenance_data =  {
-                                        x: value['desc']
-                                    }
+                            } else if (key == 'maintenance_data') {
+                                $.each(value, function (key, value) {
+                                    {#console.log(key, value)#}
+                                    maintenance_data.push({'x': value['check_in_week'], 'y': value['occurrence']})
                                 })
                             }
                         })
+
+                        renderChart(trend_data)
+
+                        console.log(trend_data)
+                        console.log(maintenance_data)
 
                         {# Source: https://stackoverflow.com/questions/22726410/how-to-use-ajax-call-to-populate-line-graph-in-highcharts#}
                         {#                        chart_data = $.map(data, function (value) {#}

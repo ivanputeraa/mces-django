@@ -56,6 +56,7 @@ class Report(models.Model):
 class Maintenance_History(models.Model):
     machine = models.TextField(max_length=6)
     check_in_time = models.DateTimeField()
+    check_in_week = models.PositiveSmallIntegerField(null=True)
     employee_id = models.TextField(max_length=5)
     operation_class = models.TextField(max_length=5)
     major_code = models.TextField(max_length=15)
