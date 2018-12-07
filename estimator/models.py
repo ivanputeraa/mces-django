@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
 
+import datetime
+
 class GBOM(models.Model):
     GBOM = models.TextField(max_length=50, null=True)
     station = models.TextField(max_length=255, null=True)
@@ -85,20 +87,21 @@ class Employee(models.Model):
 
 # Uploaded file directory path
 def user_directory_path(instance, filename):
+    current_year = datetime.datetime.now().year
     if instance.type == 0:
-        upload_path = 'uploads/Raw Production Data/By Check In Time/{0}.csv'.format(instance.title)
+        upload_path = 'uploads/Raw Production Data/By Check In Time/{0}/{1}.csv'.format(current_year, instance.title)
     elif instance.type == 1:
-        upload_path = 'uploads/Raw Production Data/By Warehouse Checking Date/{0}.csv'.format(instance.title)
+        upload_path = 'uploads/Raw Production Data/By Warehouse Checking Date/{0}/{1}.csv'.format(current_year, instance.title)
     elif instance.type == 2:
-        upload_path = 'uploads/Machine Maintenance History/{0}.csv'.format(instance.title)
+        upload_path = 'uploads/Machine Maintenance History/{0}/{1}.csv'.format(current_year, instance.title)
     elif instance.type == 3:
-        upload_path = 'uploads/Machine Bad Phenomenon Data/By Check In Time/{0}.csv'.format(instance.title)
+        upload_path = 'uploads/Machine Bad Phenomenon Data/By Check In Time/{0}/{1}.csv'.format(current_year, instance.title)
     elif instance.type == 4:
-        upload_path = 'uploads/Machine Bad Phenomenon Data/By Warehouse Checking Date/{0}.csv'.format(instance.title)
+        upload_path = 'uploads/Machine Bad Phenomenon Data/By Warehouse Checking Date/{0}/{1}.csv'.format(current_year, instance.title)
     elif instance.type == 5:
-        upload_path = 'uploads/GBOM Data/{0}.csv'.format(instance.title)
+        upload_path = 'uploads/GBOM Data/{0}/{1}.csv'.format(current_year, instance.title)
     else:
-        upload_path = 'uploads/{0}.csv'.format(instance.title)
+        upload_path = 'uploads/{0}/{1}.csv'.format(current_year, instance.title)
 
     return upload_path
 

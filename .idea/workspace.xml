@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4bb9aa1e-da2d-4fc2-aa3c-205a8e174e2b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/estimator/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/estimator/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/estimator/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/estimator/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/estimator/templates/estimator/trend.html" beforeDir="false" afterPath="$PROJECT_DIR$/estimator/templates/estimator/trend.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/estimator/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/estimator/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/uploads/Machine Maintenance History/MH1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/uploads/Machine Maintenance History/mh1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/media/uploads/Machine Maintenance History/mh1_WytkTcb.csv" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -53,18 +58,42 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/estimator/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="173">
-              <caret line="281" column="54" selection-start-line="281" selection-start-column="54" selection-end-line="281" selection-end-column="54" />
+            <state relative-caret-position="311">
+              <caret line="288" column="97" selection-start-line="288" selection-start-column="97" selection-end-line="288" selection-end-column="97" />
               <folding>
                 <element signature="e#0#57#0" expanded="true" />
-                <marker date="1544094837929" expanded="true" signature="679:777" ph="..." />
-                <marker date="1544094837929" expanded="true" signature="980:11497" ph="..." />
-                <marker date="1544094837929" expanded="true" signature="12193:12379" ph="..." />
-                <marker date="1544094837929" expanded="true" signature="12401:12402" ph="..." />
-                <marker date="1544094837929" expanded="true" signature="14555:14556" ph="..." />
+                <marker date="1544179424696" expanded="true" signature="607:705" ph="..." />
+                <marker date="1544179424696" expanded="true" signature="908:11425" ph="..." />
+                <marker date="1544179424696" expanded="true" signature="12121:12307" ph="..." />
+                <marker date="1544179424696" expanded="true" signature="12329:12330" ph="..." />
+                <marker date="1544179424696" expanded="true" signature="14482:14483" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/estimator/models.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="379">
+              <caret line="103" column="80" selection-start-line="103" selection-start-column="80" selection-end-line="103" selection-end-column="80" />
+              <folding>
+                <element signature="e#0#28#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/estimator/admin.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="120">
+              <caret line="8" column="27" selection-start-line="8" selection-start-column="27" selection-end-line="8" selection-end-column="27" />
+              <folding>
+                <element signature="e#0#32#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -73,17 +102,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/estimator/templates/estimator/trend.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="746">
-              <caret line="77" column="52" selection-start-line="77" selection-start-column="52" selection-end-line="77" selection-end-column="52" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="das://8e9a89ea-d55b-479f-996a-f1a7f4a3dcc7/schema/mces_dev/table/estimator_maintenance_history">
-          <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
-            <state>
-              <filtering enabled="true" />
+            <state relative-caret-position="237">
+              <caret line="75" column="26" selection-start-line="75" selection-start-column="26" selection-end-line="75" selection-end-column="26" />
+              <folding>
+                <element signature="e#340#375#0#HTML" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -103,6 +126,8 @@
       <find>file_create</find>
       <find>ID</find>
       <find>get</find>
+      <find>trend_chart</find>
+      <find>chart</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -140,10 +165,10 @@
         <option value="$PROJECT_DIR$/estimator/templates/estimator/base.html" />
         <option value="$PROJECT_DIR$/estimator/urls.py" />
         <option value="$PROJECT_DIR$/mces/settings.py" />
+        <option value="$PROJECT_DIR$/estimator/views.py" />
+        <option value="$PROJECT_DIR$/estimator/templates/estimator/trend.html" />
         <option value="$PROJECT_DIR$/estimator/admin.py" />
         <option value="$PROJECT_DIR$/estimator/models.py" />
-        <option value="$PROJECT_DIR$/estimator/templates/estimator/trend.html" />
-        <option value="$PROJECT_DIR$/estimator/views.py" />
       </list>
     </option>
   </component>
@@ -270,12 +295,12 @@
       <workItem from="1542956871321" duration="52600000" />
       <workItem from="1543482118659" duration="1000" />
       <workItem from="1543482471681" duration="32577000" />
-      <workItem from="1543839657001" duration="58287000" />
+      <workItem from="1543839657001" duration="64884000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="143578000" />
+    <option name="totallyTimeSpent" value="150175000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -304,7 +329,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" weight="0.32846716" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.3810549" />
+      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.3810549" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.3295099" />
       <window_info anchor="bottom" id="Database Console" order="13" weight="0.3295099" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -438,16 +463,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="324">
           <caret line="99" column="14" lean-forward="true" selection-start-line="99" selection-start-column="14" selection-end-line="99" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/estimator/tests.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="33" selection-start-line="17" selection-start-column="33" selection-end-line="17" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -593,16 +608,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/estimator/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="331">
-          <caret line="23" column="125" selection-start-line="23" selection-start-column="91" selection-end-line="23" selection-end-column="125" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mces/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
@@ -613,22 +618,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/estimator/admin.py">
+    <entry file="file://$PROJECT_DIR$/estimator/tests.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="25" selection-start-line="8" selection-start-column="25" selection-end-line="8" selection-end-column="25" />
+        <state relative-caret-position="225">
+          <caret line="17" column="33" selection-start-line="17" selection-start-column="33" selection-end-line="17" selection-end-column="33" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/estimator/models.py">
+    <entry file="file://$PROJECT_DIR$/estimator/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="48">
-          <caret line="58" column="27" selection-start-line="58" selection-start-column="27" selection-end-line="58" selection-end-column="63" />
+        <state relative-caret-position="345">
+          <caret line="23" column="125" selection-start-line="23" selection-start-column="91" selection-end-line="23" selection-end-column="125" />
           <folding>
-            <element signature="e#0#28#0" expanded="true" />
+            <element signature="e#0#32#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -642,22 +647,45 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/estimator/templates/estimator/trend.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="746">
-          <caret line="77" column="52" selection-start-line="77" selection-start-column="52" selection-end-line="77" selection-end-column="52" />
+        <state relative-caret-position="237">
+          <caret line="75" column="26" selection-start-line="75" selection-start-column="26" selection-end-line="75" selection-end-column="26" />
+          <folding>
+            <element signature="e#340#375#0#HTML" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/estimator/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="173">
-          <caret line="281" column="54" selection-start-line="281" selection-start-column="54" selection-end-line="281" selection-end-column="54" />
+        <state relative-caret-position="311">
+          <caret line="288" column="97" selection-start-line="288" selection-start-column="97" selection-end-line="288" selection-end-column="97" />
           <folding>
             <element signature="e#0#57#0" expanded="true" />
-            <marker date="1544094837929" expanded="true" signature="679:777" ph="..." />
-            <marker date="1544094837929" expanded="true" signature="980:11497" ph="..." />
-            <marker date="1544094837929" expanded="true" signature="12193:12379" ph="..." />
-            <marker date="1544094837929" expanded="true" signature="12401:12402" ph="..." />
-            <marker date="1544094837929" expanded="true" signature="14555:14556" ph="..." />
+            <marker date="1544179424696" expanded="true" signature="607:705" ph="..." />
+            <marker date="1544179424696" expanded="true" signature="908:11425" ph="..." />
+            <marker date="1544179424696" expanded="true" signature="12121:12307" ph="..." />
+            <marker date="1544179424696" expanded="true" signature="12329:12330" ph="..." />
+            <marker date="1544179424696" expanded="true" signature="14482:14483" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/estimator/admin.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="8" column="27" selection-start-line="8" selection-start-column="27" selection-end-line="8" selection-end-column="27" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/estimator/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="379">
+          <caret line="103" column="80" selection-start-line="103" selection-start-column="80" selection-end-line="103" selection-end-column="80" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -10,7 +10,7 @@
         <button class="btn btn-primary" id="go_button" type="submit">Go</button>
     </form>
     <br>
-    <div id="trend_chart" style="height: 370px; width: 100%;"></div>
+    <div id="chartContainer" style="height: 400px; width: 100%;"></div>
 {% endblock %}
 
 {% block javascript %}
@@ -74,85 +74,90 @@
                                 })
                             }
                         })
+                        {#console.log(trend_data)#}
+                        {#console.log(maintenance_data)#}
+                        renderChart(trend_data, maintenance_data)
 
-                        renderChart(maintenance_data)
-
-                        console.log(trend_data)
-                        console.log(maintenance_data)
-
-                        {# Source: https://stackoverflow.com/questions/22726410/how-to-use-ajax-call-to-populate-line-graph-in-highcharts#}
-                        {#                        chart_data = $.map(data, function (value) {#}
-                        {#                            return {x: value['week'], y: value['yield_rate']};#}
-                        {#                        });#}
-                        {#                        #}
-                        {#                        #}
-                        {##}
-                        {#                        renderChart(chart_data);#}
                     }, error: function(error) {
-                        $('#trend_chart').hide()
+                        $('#chartContainer').hide()
                         alert("No data found! Please check your input parameters!")
                     }
                 });
                 return false;
             });
 
+
             {# Line chart rendering function #}
-            {# https://canvasjs.com/javascript-charts/solid-dashed-line-chart/ #}
-            function renderChart(chart_data) {
-                var chart = new CanvasJS.Chart("trend_chart", {
+            function renderChart(trend_data, maintenance_data) {
+                var chart = new CanvasJS.Chart("chartContainer", {
                     animationEnabled: true,
-                    theme: "light2",
-                    title:{
-                        {#text: $('#id_machine').val()#}
+                    exportFileName: "Machine Trends and Maintenance Chart",  //Give any name accordingly
+                    exportEnabled: true,
+                    title: {
+                        text: "Machine Trends and Maintenance Chart"
                     },
-                    axisX:{
-                        title: "Week No",
-                        {#valueFormatString: "DD MMM",#}
-                        crosshair: {
-                            enabled: true,
-                            snapToDataPoint: true
-                        }
+                    subtitles: {
+                        text: "AAAAA"
+                    },
+                    axisX: {
+                        prefix: "Week "
                     },
                     axisY: {
-                        {#title: "Weekly Yield Rate",#}
-                        crosshair: {
-                            enabled: true
+                        title: "Yield Rate",
+                        lineColor: "#C24642",
+                        tickColor: "#C24642",
+                        labelFontColor: "#C24642",
+                        titleFontColor: "#C24642",
+                        minimum: 0,
+                        maximum:1
+                    },
+                    axisY2: {
+                        title: "Maintenance Occurrence",
+                        lineColor: "#7F6084",
+                        tickColor: "#7F6084",
+                        labelFontColor: "#7F6084",
+                        titleFontColor: "#7F6084"
+                    },
+                    toolTip: {
+                        shared: true
+                    },
+                    legend: {
+                        cursor: "pointer",
+                        itemclick: toggleDataSeries
+                    },
+                    data: [
+                        {
+                            type: "line",
+                            name: "Yield Rate",
+                            color: "#C24642",
+                            axisYIndex: 0,
+                            showInLegend: true,
+                            dataPoints: trend_data
+                        },
+                        {
+                            type: "line",
+                            name: "Maintenance Occurrence",
+                            color: "#7F6084",
+                            axisYType: "secondary",
+                            showInLegend: true,
+                            dataPoints: maintenance_data
                         }
-                    },
-                    toolTip:{
-                        shared:true
-                    },
-                    legend:{
-                        cursor:"pointer",
-                        verticalAlign: "bottom",
-                        horizontalAlign: "left",
-                        dockInsidePlotArea: true,
-                        itemclick: toogleDataSeries
-                    },
-                    data: [{
-                        type: "line",
-                        showInLegend: true,
-                        name: $('#id_machine').val() + " Yield Rate",
-                        markerType: "square",
-                        {#xValueFormatString: "DD MMM, YYYY",#}
-                        color: "#F08080",
-                        dataPoints: chart_data
-                    }]
-                });
+                    ]
+                })
 
-                $('#trend_chart').show()
+                $('#chartContainer').show()
                 chart.render();
-
-                function toogleDataSeries(e){
-                    if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-                        e.dataSeries.visible = false;
-                    } else{
-                        e.dataSeries.visible = true;
-                    }
-                    chart.render();
-                }
             }
-        });
+
+            function toggleDataSeries(e) {
+                if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                    e.dataSeries.visible = false;
+                } else {
+                    e.dataSeries.visible = true;
+                }
+                e.chart.render();
+            }
+        })
     </script>
 
     {{ form.media }}

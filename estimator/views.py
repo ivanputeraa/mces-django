@@ -5,14 +5,12 @@ from django.http import JsonResponse
 from django.views.generic import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
-from django.core import serializers
-from django.db.models import Count, Q, Sum
+from django.db.models import Count
 
 from .forms import *
 from .models import *
 from datetime import datetime
-from itertools import chain
-from collections import Counter
+from operator import itemgetter
 
 import datetime
 import pandas as pd
@@ -288,7 +286,7 @@ def get_machine_trends_and_maintenance(request):
             maintenance_data.append({'check_in_week': key, 'occurrence':value})
 
         # Sort maintenance_data by check_in_week
-        sorted_maintenance_data = sorted(list(maintenance_data), key=lambda k: k['check_in_week'])
+        sorted_maintenance_data = sorted(list(maintenance_data), key=itemgetter('check_in_week'))
         print(sorted_maintenance_data)
 
         response = json.dumps({
