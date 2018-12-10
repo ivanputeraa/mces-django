@@ -4,7 +4,7 @@ from django.core.validators import FileExtensionValidator
 import datetime
 
 class GBOM(models.Model):
-    GBOM = models.TextField(max_length=50, null=True)
+    gbom = models.TextField(max_length=50, null=True)
     station = models.TextField(max_length=255, null=True)
     station_number = models.TextField(max_length=255, null=True)
     outsourcing = models.TextField(max_length=255, null=True)

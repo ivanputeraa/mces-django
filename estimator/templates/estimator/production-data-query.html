@@ -1,0 +1,12 @@
+{% extends 'estimator/base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+    <h1 class="mt-5">Production Data Query</h1>
+
+    <form method="post" id="prod-data-query-form">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <button class="btn btn-primary" id="go_button" type="submit">Go</button>
+    </form>
+{% endblock %}

@@ -38,8 +38,7 @@ class TrendForm(forms.Form):
 
     machine = forms.CharField(
         widget=forms.TextInput(attrs={
-            "class": "form-control",
-            "autocomplete": "on"
+            "class": "form-control"
         }),
         max_length=6
     )
@@ -49,4 +48,24 @@ class TrendForm(forms.Form):
         choices=REPORT_TYPE_CHOICES,
         widget=forms.Select(),
         required=True
+    )
+
+class ProductionDataQueryForm(forms.Form):
+    QUERY_TYPE_CHOICES = (
+        (0, 'GBOM'),
+        (1, 'LOT')
+    )
+
+    input_type = forms.ChoiceField(
+        label='Query based on:',
+        choices=QUERY_TYPE_CHOICES,
+        widget=forms.Select(),
+        required=True
+    )
+
+    value = forms.CharField(
+        widget=forms.TextInput(attrs={
+            "class": "form-control"
+        }),
+        max_length=50,
     )

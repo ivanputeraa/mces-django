@@ -205,9 +205,9 @@ def file_create(request):
                             gbom=str(gbom[counter]),
                             station=str(station[counter]),
                             station_number=str(station_number[counter]),
-                            outsourcing=str(outsourcing[counter]).encode('big5').decode('unicode-escape'),
-                            station_class=str(station_class[counter]).encode('big5').decode('unicode-escape'),
-                            station_name=str(station_name[counter]).encode('big5').decode('unicode-escape'),
+                            outsourcing=str(outsourcing[counter]),
+                            station_class=str(station_class[counter]),
+                            station_name=str(station_name[counter]),
                         )
                         instances.append(instance)
                     GBOM.objects.bulk_create(instances)
@@ -246,6 +246,7 @@ class ReportList(ListView):
 
 # END Report Views
 
+# BEGIN Trend Views
 class TrendView(View):
     def get(self, request):
         form = TrendForm()
@@ -296,13 +297,32 @@ def get_machine_trends_and_maintenance(request):
 
         return JsonResponse(response, content_type='application/json', safe=False)
 
+@csrf_exempt
 def machine_autocomplete(request):
     if request.is_ajax():
-        queryset = Machine.objects.filter(machine__startswith=request.GET.get('search', None))
-        list = []
+        machine = request.GET.get('search', None)
+        queryset = Machine.objects.filter(machine__startswith=machine)
         for i in queryset:
             list.append(i.machine)
         data = {
             'list': list,
         }
         return JsonResponse(data)
+# END Trend Views
+
+# END ProductionDataQuery Views
+class ProductionDataQuery(View):
+    def get(self, request):
+        form = ProductionDataQueryForm()
+        return render(request, 'estimator/production-data-query.html', {'form': form})
+
+@csrf_exempt
+def query_production_data(request):
+    if request.is_ajax():
+        # Retrieve user input from frontend
+        input_type = request.GET.get('input_type', None)
+        value = request.GET.get('value', None)
+
+        # Perform query here...
+
+# Create LOT and GBOM autocomplete here also...
