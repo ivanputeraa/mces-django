@@ -1,0 +1,10 @@
+# IDE files
+.idea/
+
+# unnecessary folders and its contents
+mces_env/
+media/
+__pycache__/
+
+# unnecessary files
+
