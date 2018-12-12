@@ -1,5 +1,5 @@
 {% extends 'estimator/base.html' %}
-{% load bootstrap4 %}
+{% load bootstrap3 %}
 
 {% block content %}
     <h1 class="mt-5">Trend</h1>
@@ -34,7 +34,7 @@
                         list = data.list;
                         $("#id_machine").autocomplete({
                             source: list,
-                            minLength: 1,
+                            minLength: 2,
                             messages: {
                                 noResults : '',
                                 results : function(resultsCount) {}
@@ -43,8 +43,6 @@
                     }
                 });
             });
-
-            $('.ui-autocomplete').css('list-style-type', 'none').css('text-decoration', 'none')
 
             {# Trend form submission handler #}
             $('#trend_form').submit(function (event) {
@@ -59,15 +57,15 @@
                     dataType: 'json',
                     success: function (response) {
                         data = jQuery.parseJSON(response)
-                        {#console.log(data)#}
+                        console.log(data)
 
                         $.each(data, function (key, value) {
-                            if (key == 'trends_data') {
+                            if (key == 'yield_rate') {
                                 $.each(value, function (key, value) {
                                     {#console.log(key, value)#}
-                                    trend_data.push({'x': value['week'], 'y': value['yield_rate']})
+                                    trend_data.push({'x': value['period_in_week'], 'y': value['yield_rate']})
                                 })
-                            } else if (key == 'maintenance_data') {
+                            } else if (key == 'maintenance_history') {
                                 $.each(value, function (key, value) {
                                     {#console.log(key, value)#}
                                     maintenance_data.push({'x': value['check_in_week'], 'y': value['occurrence']})
@@ -96,14 +94,11 @@
                     title: {
                         text: "Machine Trends and Maintenance Chart"
                     },
-                    subtitles: {
-                        text: "AAAAA"
-                    },
                     axisX: {
                         prefix: "Week "
                     },
                     axisY: {
-                        title: "Yield Rate",
+                        title: "Estimated Yield Rate",
                         lineColor: "#C24642",
                         tickColor: "#C24642",
                         labelFontColor: "#C24642",
@@ -113,13 +108,26 @@
                     },
                     axisY2: {
                         title: "Maintenance Occurrence",
-                        lineColor: "#7F6084",
-                        tickColor: "#7F6084",
-                        labelFontColor: "#7F6084",
-                        titleFontColor: "#7F6084"
+                        lineColor: "#2c96ee",
+                        tickColor: "#2c96ee",
+                        labelFontColor: "#2c96ee",
+                        titleFontColor: "#2c96ee"
                     },
                     toolTip: {
-                        shared: true
+                        shared: true,
+                        contentFormatter: function (e) {
+                            var content = " ";
+                            for (var i = 0; i < e.entries.length; i++) {
+                                if (i == 0) {
+                                    content += "Week " + e.entries[i].dataPoint.x + " data:";
+                                    content += "<br/>";
+                                }
+
+                                content += e.entries[i].dataSeries.name + ": " + "<strong>" + e.entries[i].dataPoint.y + "</strong>";
+                                content += "<br/>";
+                            }
+                            return content;
+                        }
                     },
                     legend: {
                         cursor: "pointer",
@@ -137,7 +145,7 @@
                         {
                             type: "line",
                             name: "Maintenance Occurrence",
-                            color: "#7F6084",
+                            color: "#2c96ee",
                             axisYType: "secondary",
                             showInLegend: true,
                             dataPoints: maintenance_data

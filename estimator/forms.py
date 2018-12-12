@@ -22,8 +22,8 @@ class FileForm(forms.ModelForm):
 class TrendForm(forms.Form):
 
     REPORT_TYPE_CHOICES = (
-        (0, 'Cell-based'),
-        (1, 'Panel-based')
+        ('Cell', 'Cell-based'),
+        ('Panel', 'Panel-based')
     )
 
     start_date = forms.DateField(
@@ -38,13 +38,13 @@ class TrendForm(forms.Form):
 
     machine = forms.CharField(
         widget=forms.TextInput(attrs={
-            "class": "form-control"
+            "class": "form-control",
+            "autocomplete": "off"  # disable input history
         }),
         max_length=6
     )
 
-    is_panels = forms.ChoiceField(
-        label='Report Type',
+    report_type = forms.ChoiceField(
         choices=REPORT_TYPE_CHOICES,
         widget=forms.Select(),
         required=True

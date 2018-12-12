@@ -25,18 +25,26 @@
                     <td>{{ file.last_modified }}</td>
                     <td>
                         <div class="btn-group" role="group">
-                            <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Select
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-{#                                <a href="" class="dropdown-item">#}
-{#                                    Analyze</a>#}
-{#                                <a href="{% url 'estimator:file-update' file.pk %}" class="dropdown-item">#}
-{#                                    Update</a>#}
+                            <button class="btn btn-secondary dropdown-toggle" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Select <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                 {# Production data by check in time #}
+                                {% if file.type == 0 %}
+                                    <a href="{% url 'estimator:file-analyze' pk=file.pk %}" class="dropdown-item">
+                                        Analyze Data
+                                    </a>
+
+                                    {# Production data by warehouse check in date #}
+                                {% elif file.type == 1 %}
+                                    <a href="{% url 'estimator:file-analyze' pk=file.pk %}" class="dropdown-item">
+                                        Analyze
+                                    </a>
+                                {% endif %}
+                                {#                                <a href="{% url 'estimator:file-update' file.pk %}" class="dropdown-item">#}
+                                {#                                    Update</a>#}
                                 <a href="{% url 'estimator:file-delete' file.pk %}" class="dropdown-item">
                                     Delete
                                 </a>
-                            </div>
+                            </ul>
                         </div>
                     </td>
                 </tr>

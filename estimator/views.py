@@ -6,16 +6,75 @@ from django.views.generic import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.db.models import Count
+from django.conf import settings
 
 from .forms import *
 from .models import *
 from datetime import datetime
 from operator import itemgetter
 
+from shutil import copyfile
+from estimator import DataPreprocess
+from estimator import EM_Algorithm2
+from estimator import LinearLeastSquaresToSolveWeeklyYield
+
 import datetime
 import pandas as pd
 import json
 import collections
+import os
+import time
+
+# Begin of PeiKai's code
+def analyze_data(request, pk): # Rename from UploadAndAnalyze
+
+    file = File.objects.values_list('file', flat=True).filter(pk=pk)
+    file_path = os.path.join(settings.MEDIA_ROOT, file[0])
+
+    # return HttpResponse(os.path.join(settings.MEDIA_ROOT, file_path))
+
+    # Read the prod data file
+    DataFlow = pd.read_csv(file_path, encoding='big5')
+
+    # Check whether prod data is the correct one
+    if '入庫日期' not in DataFlow.columns.values:
+        return HttpResponse('production data is wrong')
+    else:  # 根据入库时间重命名
+        FinishTimeList = DataFlow['入庫日期'].values.copy()
+        FinishTimeList.sort()
+        FinishTimeRange = FinishTimeList[0] + "_" + FinishTimeList[len(FinishTimeList) - 1]
+        FinishTimeRange = FinishTimeRange.replace("/", "_")
+
+        # RawDataPath = os.path.join(os.getcwd() + "\\analyse\\RawData", FinishTimeRange + "_RawData.csv")
+        RawDataPath = os.path.join(os.getcwd() + "/estimator/RawData", FinishTimeRange + "_RawData.csv")
+
+        ProcessedDataPath = os.path.join(os.getcwd() + "/estimator/ProcessedData", FinishTimeRange + "_ProcessedData.csv")
+        ProcessedDataPathByCellNotSplit = ProcessedDataPath.replace("ProcessedData.csv", "ProcessedDataByCellNotSplit.csv")
+        ProcessedDataPathByPanelNotSplit = ProcessedDataPath.replace("ProcessedData.csv", "ProcessedDataByPanelNotSplit.csv")
+
+        ReportPath = os.path.join(os.getcwd() + "/estimator/Report", FinishTimeRange + "_Report.csv")
+        ReportPathByCellNotSplit = ReportPath.replace("Report.csv", "ReportByCellNotSplit.csv")
+        ReportPathByPanelNotSplit = ReportPath.replace("Report.csv", "ReportByPanelNotSplit.csv")
+
+        copyfile(file_path, RawDataPath)
+
+        # Data pre processing
+        # DataPreprocess.ProcessData(RawDataPath, ProcessedDataPath, PerfectMachineList=[])
+
+        # Analyze pre processed data and generate cell-based report
+        print("Start Analyse By Panel Not Split", time.time())
+        # EM_Algorithm2.micro_crack_esimator(ProcessedDataPathByCellNotSplit, ReportPathByCellNotSplit)
+        print("Finish", time.time())
+
+        # Analyze pre processed data and generate panel-based report
+        print("Start Analyse By Panel Not Split", time.time())
+        # EM_Algorithm2.micro_crack_esimator(ProcessedDataPathByPanelNotSplit, ReportPathByPanelNotSplit)
+        print("Finish", time.time())
+
+        # Linear Least Squares To Solve Weekly
+        LinearLeastSquaresToSolveWeeklyYield.ComputeWeeklyYieldWithLeastSquare()
+
+    return HttpResponse('上传分析完毕')
 
 class IndexView(View):
     def get(self, request):
@@ -259,7 +318,7 @@ def get_machine_trends_and_maintenance(request):
         start_date_str = request.GET.get('start_date', None)
         end_date_str = request.GET.get('end_date', None)
         machine = request.GET.get('machine', None)
-        is_panels = request.GET.get('is_panels', None)
+        report_type = request.GET.get('report_type', None)
 
         # Convert str to datetime object
         date_format = '%Y-%m-%d'
@@ -270,29 +329,31 @@ def get_machine_trends_and_maintenance(request):
         start_week = start_date.isocalendar()[1]
         end_week = end_date.isocalendar()[1]
 
-        machine_trends = Report.objects.values('week','yield_rate'). \
-            filter(machine=machine, week__range=(start_week, end_week), is_panels=is_panels). \
-            order_by('week')
+        machine_yield_rate = Machine_Yield_Rate_History.objects\
+            .values('period_in_week', 'yield_rate')\
+            .filter(machine=machine, period_in_week__range=(start_week, end_week), analyze_type=report_type)\
+            .order_by('period_in_week')
 
-        machine_maintenance = Maintenance_History.objects.values('check_in_week'). \
-            filter(machine=machine, check_in_week__range=(start_week, end_week)). \
-            annotate(occurrence=Count('check_in_week', distinct=True))
+        machine_maintenance = Maintenance_History.objects\
+            .values('check_in_week')\
+            .filter(machine=machine, check_in_week__range=(start_week, end_week))\
+            .annotate(occurrence=Count('check_in_week', distinct=True))
 
         # Count machine occurrences which has the same check_in_week
         distinct_machine_maintenance = collections.Counter(item['check_in_week'] for item in list(machine_maintenance))
 
-        # Map distinct_machine_maintenance result into an array of dicts
+        # Map distinct_machine_maintenance into an array of dictionaries
         maintenance_data = []
         for key, value in distinct_machine_maintenance.items():
-            maintenance_data.append({'check_in_week': key, 'occurrence':value})
+            maintenance_data.append({'check_in_week': key, 'occurrence': value})
 
         # Sort maintenance_data by check_in_week
         sorted_maintenance_data = sorted(list(maintenance_data), key=itemgetter('check_in_week'))
         print(sorted_maintenance_data)
 
         response = json.dumps({
-            'trends_data': list(machine_trends),
-            'maintenance_data': sorted_maintenance_data,
+            'yield_rate': list(machine_yield_rate),
+            'maintenance_history': sorted_maintenance_data,
         })
 
         return JsonResponse(response, content_type='application/json', safe=False)
@@ -301,11 +362,19 @@ def get_machine_trends_and_maintenance(request):
 def machine_autocomplete(request):
     if request.is_ajax():
         machine = request.GET.get('search', None)
-        queryset = Machine.objects.filter(machine__startswith=machine)
-        for i in queryset:
-            list.append(i.machine)
+        queryset = Machine_Yield_Rate_History.objects.filter(machine__startswith=machine)
+
+        # Because MySQL db backend doesn't support DISTINCT ON syntax,
+        # so manually filter duplicate machine names from the queryset
+        temp_items = []
+        machines = []
+        for item in queryset:
+            if item.machine not in machines:
+                temp_items.append(item)
+                machines.append(item.machine)
+
         data = {
-            'list': list,
+            'list': machines,
         }
         return JsonResponse(data)
 # END Trend Views

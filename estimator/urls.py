@@ -18,6 +18,7 @@ urlpatterns = [
     re_path(r'^file/create/$', views.file_create, name='file-create'),
     re_path(r'^file/update/(?P<pk>\d+)/$', views.FileUpdate.as_view(), name='file-update'),
     re_path(r'^file/delete/(?P<pk>\d+)/$', views.FileDelete.as_view(), name='file-delete'),
+    re_path(r'^file/analyze/(?P<pk>\d+)/$', views.analyze_data, name='file-analyze'),
 
     # Report Page URLs
     re_path(r'^report/list/$', views.ReportList.as_view(), name='report-list'),

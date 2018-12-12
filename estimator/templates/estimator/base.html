@@ -1,4 +1,5 @@
 {% load static %}
+{% load bootstrap3 %}
 
 <!doctype html>
 <html lang="en">
@@ -6,55 +7,77 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" href="{% static 'estimator/icons/favicon.ico' %}">
+
     <title>{% block title %}Micro Crack Estimator System{% endblock %}</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="icon" href="{% static 'estimator/icons/favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'estimator/css/bootstrap.min.css' %}">
     <link href="{% static 'estimator/css/sticky-footer-navbar.css' %}" rel="stylesheet">
+
+    {# jQuery autocomplete styling source: https://stackoverflow.com/questions/28285813/style-jquery-autocomplete-in-a-bootstrap-input-field #}
+    <link href="{% static 'estimator/css/jquery-ui.css' %}" rel="stylesheet"/> # https://stackoverflow.com/questions/28285813/style-jquery-autocomplete-in-a-bootstrap-input-field
 </head>
 <body>
 <header>
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <a class="navbar-brand" href="{% url 'estimator:index' %}">Micro Crack Estimator System</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'estimator:file-list' %}">File List</a>
-                </li>
-{#                <li class="nav-item">#}
-{#                    <a class="nav-link" href="{% url 'estimator:report-list' %}">Report List</a>#}
-{#                </li>#}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'estimator:trend' %}">Trend</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'estimator:query-production-data' %}">Production Data Query</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                </li>
-            </ul>
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'estimator:home' %}">Micro Crack Estimator System</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="{% url 'estimator:home' %}">Home</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Production Data<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="{% url 'estimator:file-list' %}">File List</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'estimator:file-create' %}">Upload File</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="{% url 'estimator:trend' %}">Trend</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'estimator:query-production-data' %}">Production Data Query</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">Logout</a>
+                    </li>
+                </ul>
+            </div><!--/.nav-collapse -->
         </div>
     </nav>
 </header>
+
 <!-- Begin page content -->
 <main role="main" class="container">
     {% block content %}
     {% endblock %}
 </main>
+
 <footer class="footer">
     <div class="container">
         <span class="text-muted">Copyright © {% now 'Y' %} National Central University. All Rights Reserved</span>
     </div>
 </footer>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="{% static 'estimator/js/jquery-ui.min.js' %}"></script>
 <script src="{% static 'estimator/js/bootstrap.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+
 {% block javascript %}
 {% endblock %}
 </body>

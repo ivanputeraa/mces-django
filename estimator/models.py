@@ -3,6 +3,54 @@ from django.core.validators import FileExtensionValidator
 
 import datetime
 
+# Begin of PeiKai's code
+
+# class HistoryMachineYieldRate(models.Model):
+class Machine_Yield_Rate_History(models.Model):
+    machine = models.TextField()
+    period = models.TextField()
+    period_in_week = models.PositiveSmallIntegerField(null=True)
+    yield_rate = models.FloatField()
+    processed_pieces = models.TextField()
+    analyze_type = models.TextField(default="Cell")
+
+    class Meta:
+        verbose_name = 'Machine Yield Rate History'
+        verbose_name_plural = 'Machine Yield Rate Histories'
+        ordering = ['yield_rate']
+
+    def __str__(self):
+        return str("(Week {0}) {1} , yield rate: {3}").format(self.period_in_week, self.machine, self.yield_rate)
+
+class HistoryMachineUsage(models.Model):
+      Lot = models.TextField()
+      Period = models.TextField()
+      Machine = models.TextField()
+
+      class Meta:
+          db_table = "HistoryMachineUsage"
+
+class MachineUsedByLotInformation(models.Model):
+    MaterialNumber = models.TextField()
+    GBOM = models.TextField()
+    Lot = models.CharField(max_length=255,db_index=True)
+    FinishTime = models.TextField()
+    TypeSettingNumber = models.TextField()
+    Machine = models.CharField(max_length=255)
+    CheckInTime = models.TextField()
+    CheckOutTime = models.TextField()
+    StationNumber = models.TextField()
+    GoodPieces = models.TextField()
+    BadPieces = models.TextField()
+    FirstStation = models.TextField()
+    CurrentTotalPieces = models.TextField()
+    Period = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = "MachineUsedByLotInformation"
+        index_together = ["Period", "Machine"]
+# End of PeiKai's code
+
 class GBOM(models.Model):
     gbom = models.TextField(max_length=50, null=True)
     station = models.TextField(max_length=255, null=True)
