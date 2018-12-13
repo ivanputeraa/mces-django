@@ -74,7 +74,8 @@
                         })
                         {#console.log(trend_data)#}
                         {#console.log(maintenance_data)#}
-                        renderChart(trend_data, maintenance_data)
+                        var machine = $('#id_machine').val()
+                        renderChart(machine, trend_data, maintenance_data)
 
                     }, error: function(error) {
                         $('#chartContainer').hide()
@@ -86,13 +87,14 @@
 
 
             {# Line chart rendering function #}
-            function renderChart(trend_data, maintenance_data) {
+            function renderChart(machine, trend_data, maintenance_data) {
                 var chart = new CanvasJS.Chart("chartContainer", {
                     animationEnabled: true,
-                    exportFileName: "Machine Trends and Maintenance Chart",  //Give any name accordingly
+                    exportFileName: "Machine Yield Rate and Maintenance Chart (" + machine + ")",  //Give any name accordingly
                     exportEnabled: true,
                     title: {
-                        text: "Machine Trends and Maintenance Chart"
+                        text: "Machine Yield Rate and Maintenance Chart (" + machine + ")",
+                        fontFamily: "Tahoma",
                     },
                     axisX: {
                         prefix: "Week "
@@ -143,7 +145,7 @@
                             dataPoints: trend_data
                         },
                         {
-                            type: "line",
+                            type: "column",
                             name: "Maintenance Occurrence",
                             color: "#2c96ee",
                             axisYType: "secondary",
