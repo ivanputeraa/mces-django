@@ -15,7 +15,7 @@
     <link href="{% static 'estimator/css/sticky-footer-navbar.css' %}" rel="stylesheet">
 
     {# jQuery autocomplete styling source: https://stackoverflow.com/questions/28285813/style-jquery-autocomplete-in-a-bootstrap-input-field #}
-    <link href="{% static 'estimator/css/jquery-ui.css' %}" rel="stylesheet"/> # https://stackoverflow.com/questions/28285813/style-jquery-autocomplete-in-a-bootstrap-input-field
+    <link href="{% static 'estimator/css/jquery-ui.css' %}" rel="stylesheet"/>
 </head>
 <body>
 <header>
@@ -46,6 +46,9 @@
                                 <a href="{% url 'estimator:file-create' %}">Upload File</a>
                             </li>
                         </ul>
+                    </li>
+                    <li>
+                        <a href="{% url 'estimator:report-download' %}">Report Download</a>
                     </li>
                     <li>
                         <a href="{% url 'estimator:trend' %}">Trend</a>

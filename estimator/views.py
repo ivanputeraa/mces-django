@@ -59,22 +59,23 @@ def analyze_data(request, pk): # Rename from UploadAndAnalyze
         copyfile(file_path, RawDataPath)
 
         # Data pre processing
-        # DataPreprocess.ProcessData(RawDataPath, ProcessedDataPath, PerfectMachineList=[])
+        DataPreprocess.ProcessData(RawDataPath, ProcessedDataPath, PerfectMachineList=[])
 
         # Analyze pre processed data and generate cell-based report
         print("Start Analyse By Panel Not Split", time.time())
-        # EM_Algorithm2.micro_crack_esimator(ProcessedDataPathByCellNotSplit, ReportPathByCellNotSplit)
+        EM_Algorithm2.micro_crack_esimator(ProcessedDataPathByCellNotSplit, ReportPathByCellNotSplit)
         print("Finish", time.time())
 
         # Analyze pre processed data and generate panel-based report
         print("Start Analyse By Panel Not Split", time.time())
-        # EM_Algorithm2.micro_crack_esimator(ProcessedDataPathByPanelNotSplit, ReportPathByPanelNotSplit)
+        EM_Algorithm2.micro_crack_esimator(ProcessedDataPathByPanelNotSplit, ReportPathByPanelNotSplit)
         print("Finish", time.time())
 
         # Linear Least Squares To Solve Weekly
         LinearLeastSquaresToSolveWeeklyYield.ComputeWeeklyYieldWithLeastSquare()
 
-    return HttpResponse('上传分析完毕')
+    # return HttpResponse('上传分析完毕')
+    return HttpResponseRedirect(reverse('estimator:report-list'))
 
 class IndexView(View):
     def get(self, request):
@@ -172,6 +173,7 @@ def file_create(request):
                 else:
                     machine_list = df['設備代碼'].values.copy()
                     check_in_time_list = df['CHECK IN TIME'].values.copy()
+                    check_out_time_list = df['CHECK OUT TIME'].values.copy()
                     employee_id_list = df['員工代碼'].values.copy()
                     operation_class_list = df['作業類別'].values.copy()
                     major_code_list = df['大項故障代碼'].values.copy()
@@ -184,13 +186,15 @@ def file_create(request):
                     replace_parts_list = df['備品需求'].values.copy()
 
                     for counter in range(0, len(df) - 1):  # Exclude last row
+
+                        # Convert check_in_time and check_out_time into week
                         check_in_time = str(check_in_time_list[counter]).replace('/', '-')
-                        check_in_week = datetime.datetime.strptime(check_in_time, '%Y-%m-%d %H:%M:%S').isocalendar()[1] # Convert check_in_time into week
+                        check_out_time = str(check_out_time_list[counter]).replace('/', '-')
 
                         instance = Maintenance_History(
                             machine=str(machine_list[counter]),
                             check_in_time=check_in_time,
-                            check_in_week=check_in_week,
+                            check_out_time=check_out_time,
                             employee_id=str(employee_id_list[counter]).replace('.0', ''),
                             operation_class=str(operation_class_list[counter]),
                             major_code=str(major_code_list[counter]),
@@ -298,10 +302,10 @@ class FileDelete(DeleteView):
 # END File Upload Views
 
 # BEGIN Report Views
-class ReportList(ListView):
-    model = Report
-    template_name_suffix = '-list'
-    queryset = Report.objects.all()
+class ReportDownload(FormView):
+    form_class = ReportForm
+    template_name = 'estimator/report-download.html'
+    success_url = reverse_lazy('estimator:report-download')
 
 # END Report Views
 
@@ -330,33 +334,37 @@ def get_machine_trends_and_maintenance(request):
         end_week = end_date.isocalendar()[1]
 
         machine_yield_rate = Machine_Yield_Rate_History.objects\
-            .values('period_in_week', 'yield_rate')\
-            .filter(machine=machine, period_in_week__range=(start_week, end_week), analyze_type=report_type)\
-            .order_by('period_in_week')
+            .values('period', 'yield_rate')\
+            .filter(machine=machine, start_period__range=(start_date, end_date), end_period__range=(start_date, end_date), analyze_type=report_type)\
+            .order_by('end_period')
 
         machine_maintenance = Maintenance_History.objects\
-            .values('check_in_week')\
-            .filter(machine=machine, check_in_week__range=(start_week, end_week))\
-            .annotate(occurrence=Count('check_in_week', distinct=True))
+            .values('check_in_time')\
+            .filter(machine=machine, check_in_time__range=(start_date, end_date), check_out_time__range=(start_date, end_date))\
+            .order_by('check_in_time')
 
-        # Count machine occurrences which has the same check_in_week
-        distinct_machine_maintenance = collections.Counter(item['check_in_week'] for item in list(machine_maintenance))
-
-        # Map distinct_machine_maintenance into an array of dictionaries
-        maintenance_data = []
-        for key, value in distinct_machine_maintenance.items():
-            maintenance_data.append({'check_in_week': key, 'occurrence': value})
-
-        # Sort maintenance_data by check_in_week
-        sorted_maintenance_data = sorted(list(maintenance_data), key=itemgetter('check_in_week'))
-        print(sorted_maintenance_data)
+        # # Count machine occurrences which has the same check_in_week
+        # distinct_machine_maintenance = collections.Counter(item['check_in_week'] for item in list(machine_maintenance))
+        #
+        # # Map distinct_machine_maintenance into an array of dictionaries
+        # maintenance_data = []
+        # for key, value in distinct_machine_maintenance.items():
+        #     maintenance_data.append({'check_in_week': key, 'occurrence': value})
+        #
+        # # Sort maintenance_data by check_in_week
+        # sorted_maintenance_data = sorted(list(maintenance_data), key=itemgetter('check_in_week'))
+        # print(sorted_maintenance_data)
 
         response = json.dumps({
             'yield_rate': list(machine_yield_rate),
-            'maintenance_history': sorted_maintenance_data,
+            # 'maintenance_history': list(machine_maintenance),
         })
 
         return JsonResponse(response, content_type='application/json', safe=False)
+
+def myconverter(o):
+    if isinstance(o, datetime.datetime):
+        return o.__str__()
 
 @csrf_exempt
 def machine_autocomplete(request):

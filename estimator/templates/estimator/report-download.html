@@ -1,0 +1,19 @@
+{% extends 'estimator/base.html' %}
+
+{% load bootstrap3 %}
+
+{% block title %}Report List{% endblock %}
+
+{% block content %}
+    <h1 class="mt-5">Report Download</h1>
+
+   <form method="post" id="report-download-form">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <button class="btn btn-primary" id="go_button" type="submit">Download</button>
+    </form>
+{% endblock %}
+
+{% block javascript %}
+
+{% endblock %}

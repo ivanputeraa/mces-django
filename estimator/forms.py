@@ -1,23 +1,28 @@
 from django import forms
-from .models import File
+from .models import *
 from bootstrap_datepicker_plus import DatePickerInput
 
+
 class FileForm(forms.ModelForm):
+    start_period = forms.DateField(
+        widget=DatePickerInput(format='%Y-%m-%d'),
+        required=True
+    )
+
+    end_period = forms.DateField(
+        widget=DatePickerInput(format='%Y-%m-%d'),
+        required=True
+    )
+
     file = forms.FileField(
         label='Select a File',
         help_text='Max. 15 MegaBytes'
     )
 
-    time_range = forms.CharField(
-        label='Time range (Optional)',
-        help_text='Example : 20181201-20181208',
-        required=False,
-        max_length=17
-    )
-
     class Meta:
         model = File
         fields = '__all__'
+
 
 class TrendForm(forms.Form):
 
@@ -50,6 +55,7 @@ class TrendForm(forms.Form):
         required=True
     )
 
+
 class ProductionDataQueryForm(forms.Form):
     QUERY_TYPE_CHOICES = (
         (0, 'GBOM'),
@@ -69,3 +75,20 @@ class ProductionDataQueryForm(forms.Form):
         }),
         max_length=50,
     )
+
+
+class ReportForm(forms.Form):
+
+    period = forms.ChoiceField(
+        label='Select report period:',
+        choices=[],
+        widget=forms.Select(),
+        required=True
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(ReportForm, self).__init__(*args, **kwargs)
+        self.fields['period'].choices = [(period, period) for period in Machine_Yield_Rate_History.objects
+            .values_list('period', flat=True)
+            .distinct()
+            .order_by('-end_period')]

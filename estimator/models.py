@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import FileExtensionValidator
+from django.utils import timezone
 
 import datetime
 
@@ -8,8 +9,9 @@ import datetime
 # class HistoryMachineYieldRate(models.Model):
 class Machine_Yield_Rate_History(models.Model):
     machine = models.TextField()
-    period = models.TextField()
-    period_in_week = models.PositiveSmallIntegerField(null=True)
+    period = models.TextField(null=True)
+    start_period = models.DateField(default=timezone.now)
+    end_period = models.DateField(default=timezone.now)
     yield_rate = models.FloatField()
     processed_pieces = models.TextField()
     analyze_type = models.TextField(default="Cell")
@@ -83,30 +85,11 @@ class Machine(models.Model):
     def __str__(self):
         return self.machine
 
-class Report(models.Model):
-    REPORT_TYPE_CHOICES = (
-        (0, 'Cell-based'),
-        (1, 'Panel-based'),
-    )
-
-    week = models.PositiveSmallIntegerField(null=False)
-    last_modified = models.DateTimeField(auto_now=True)
-    machine = models.CharField(max_length=6, null=False)
-    yield_rate = models.FloatField()
-    bad_pieces_est = models.BigIntegerField()
-    is_panels = models.BooleanField(choices=REPORT_TYPE_CHOICES, default=0)
-
-    class Meta:
-        ordering = ['week']
-
-    def __str__(self):
-        return "(Week {0}) {1}".format(self.week, self.machine)
-
 # ALTER TABLE estimator_maintenance_history CONVERT TO CHARACTER SET big5 COLLATE big5_chinese_ci;
 class Maintenance_History(models.Model):
     machine = models.TextField(max_length=6)
-    check_in_time = models.DateTimeField()
-    check_in_week = models.PositiveSmallIntegerField(null=True)
+    check_in_time = models.DateTimeField(default=timezone.now)
+    check_out_time = models.DateTimeField(default=timezone.now)
     employee_id = models.TextField(max_length=5)
     operation_class = models.TextField(max_length=5)
     major_code = models.TextField(max_length=15)
@@ -136,20 +119,23 @@ class Employee(models.Model):
 # Uploaded file directory path
 def user_directory_path(instance, filename):
     current_year = datetime.datetime.now().year
+    start_period = instance.start_period.strftime('%Y%m%d').replace('-', '')
+    end_period = instance.end_period.strftime('%Y%m%d').replace('-', '')
+
     if instance.type == 0:
-        upload_path = 'uploads/Raw Production Data/By Check In Time/{0}/{1}.csv'.format(current_year, instance.title)
+        upload_path = 'uploads/Raw Production Data/By Check In Time/{0}/{1}_{2}.csv'.format(current_year, start_period, end_period)
     elif instance.type == 1:
-        upload_path = 'uploads/Raw Production Data/By Warehouse Checking Date/{0}/{1}.csv'.format(current_year, instance.title)
+        upload_path = 'uploads/Raw Production Data/By Warehouse Checking Date/{0}/{1}_{2}.csv'.format(current_year, start_period, end_period)
     elif instance.type == 2:
-        upload_path = 'uploads/Machine Maintenance History/{0}/{1}.csv'.format(current_year, instance.title)
+        upload_path = 'uploads/Machine Maintenance History/{0}/{1}_{2}.csv'.format(current_year, start_period, end_period)
     elif instance.type == 3:
-        upload_path = 'uploads/Machine Bad Phenomenon Data/By Check In Time/{0}/{1}.csv'.format(current_year, instance.title)
+        upload_path = 'uploads/Machine Bad Phenomenon Data/By Check In Time/{0}/{1}_{2}.csv'.format(current_year, start_period, end_period)
     elif instance.type == 4:
-        upload_path = 'uploads/Machine Bad Phenomenon Data/By Warehouse Checking Date/{0}/{1}.csv'.format(current_year, instance.title)
+        upload_path = 'uploads/Machine Bad Phenomenon Data/By Warehouse Checking Date/{0}/{1}_{2}.csv'.format(current_year, start_period, end_period)
     elif instance.type == 5:
-        upload_path = 'uploads/GBOM Data/{0}/{1}.csv'.format(current_year, instance.title)
+        upload_path = 'uploads/GBOM Data/{0}/{1}_{2}.csv'.format(current_year, start_period, end_period)
     else:
-        upload_path = 'uploads/{0}/{1}.csv'.format(current_year, instance.title)
+        upload_path = 'uploads/{0}/{1}_{2}.csv'.format(current_year, start_period, end_period)
 
     return upload_path
 
@@ -163,14 +149,14 @@ class File(models.Model):
         (5, 'GBOM Data'),
     )
 
-    title = models.CharField(max_length=255, null=False)
-    time_range = models.CharField(max_length=17, null=True)
+    start_period = models.DateField(default=timezone.now)
+    end_period = models.DateField(default=timezone.now)
+    type = models.IntegerField(null=False, choices=FILE_TYPE_CHOICES, default=0)
 
     # Source : https://docs.djangoproject.com/en/2.1/ref/validators/#fileextensionvalidator
     file = models.FileField(upload_to=user_directory_path,
                             null=False,
                             validators=[FileExtensionValidator(["csv"])])
-    type = models.IntegerField(null=False, choices=FILE_TYPE_CHOICES, default=0)
     last_modified = models.DateTimeField(auto_now=True)
 
     class Meta:

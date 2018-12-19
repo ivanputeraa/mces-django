@@ -21,7 +21,7 @@ urlpatterns = [
     re_path(r'^file/analyze/(?P<pk>\d+)/$', views.analyze_data, name='file-analyze'),
 
     # Report Page URLs
-    re_path(r'^report/list/$', views.ReportList.as_view(), name='report-list'),
+    re_path(r'^report/download/$', views.ReportDownload.as_view(), name='report-download'),
 
     # Query Production Data Page URL
     re_path(r'^query-production-data/$', views.ProductionDataQuery.as_view(), name='query-production-data'),

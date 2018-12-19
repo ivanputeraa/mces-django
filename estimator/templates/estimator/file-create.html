@@ -17,5 +17,8 @@
         <input class="btn btn-primary" type="submit" value="Save" />
         <a href="{% url 'estimator:file-list' %}" class="btn btn-light" >Cancel</a>
     </form>
+{% endblock %}
 
+{% block javascript %}
+    {{ form.media }}
 {% endblock %}

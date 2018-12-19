@@ -62,18 +62,20 @@
                         $.each(data, function (key, value) {
                             if (key == 'yield_rate') {
                                 $.each(value, function (key, value) {
-                                    {#console.log(key, value)#}
-                                    trend_data.push({'x': value['period_in_week'], 'y': value['yield_rate']})
+                                    console.log(key, value)
+
+                                    // Source: https://jsfiddle.net/canvasjs/6ftyg155/
+                                    trend_data.push({'label': value['period'], 'y': value['yield_rate']})
                                 })
                             } else if (key == 'maintenance_history') {
                                 $.each(value, function (key, value) {
-                                    {#console.log(key, value)#}
-                                    maintenance_data.push({'x': value['check_in_week'], 'y': value['occurrence']})
+                                    console.log(key, value)
+                                    maintenance_data.push({'x': value['period'], 'y': value['occurrence']})
                                 })
                             }
-                        })
-                        {#console.log(trend_data)#}
-                        {#console.log(maintenance_data)#}
+                         })
+                        console.log(trend_data)
+                        console.log(maintenance_data)
                         var machine = $('#id_machine').val()
                         renderChart(machine, trend_data, maintenance_data)
 
@@ -87,7 +89,7 @@
 
 
             {# Line chart rendering function #}
-            function renderChart(machine, trend_data, maintenance_data) {
+            function renderChart(machine, trend_data = [], maintenance_data = []) {
                 var chart = new CanvasJS.Chart("chartContainer", {
                     animationEnabled: true,
                     exportFileName: "Machine Yield Rate and Maintenance Chart (" + machine + ")",  //Give any name accordingly
@@ -97,7 +99,7 @@
                         fontFamily: "Tahoma",
                     },
                     axisX: {
-                        prefix: "Week "
+                        labelAngle: -30
                     },
                     axisY: {
                         title: "Estimated Yield Rate",
@@ -121,7 +123,7 @@
                             var content = " ";
                             for (var i = 0; i < e.entries.length; i++) {
                                 if (i == 0) {
-                                    content += "Week " + e.entries[i].dataPoint.x + " data:";
+                                    content += "Period: " + "<strong>" + e.entries[i].dataPoint.label + "</strong>";
                                     content += "<br/>";
                                 }
 
@@ -129,7 +131,7 @@
                                 content += "<br/>";
                             }
                             return content;
-                        }
+                         }
                     },
                     legend: {
                         cursor: "pointer",

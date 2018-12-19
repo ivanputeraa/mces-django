@@ -1,18 +1,21 @@
 {% extends 'estimator/base.html' %}
 
+{% load static %}
+
 {% block title %}File List{% endblock %}
 
 {% block content %}
     <h1 class="mt-5">File List</h1>
 
-    <a href="{% url 'estimator:file-create' %}" class="btn btn-primary float-right" >Upload File</a>
+    <a href="{% url 'estimator:file-create' %}" class="btn btn-primary pull-right">Upload File</a>
     <br><br>
-    <table class="table">
+    <table class="table table-hover">
         <thead>
         <tr>
-            <th scope="col">ID</th>
-            <th scope="col">File Name</th>
-            <th scope="col">Last Modified</th>
+            <th scope="col" class="text-center">ID</th>
+            <th scope="col" class="text-center">Start Period</th>
+            <th scope="col" class="text-center">End Period</th>
+            <th scope="col">File Type</th>
             <th scope="col">Actions</th>
         </tr>
         </thead>
@@ -20,35 +23,59 @@
         {% if file_list %}
             {% for file in file_list %}
                 <tr>
-                    <th scope="row">{{ file.id }}</th>
-                    <td>{{ file.title }}</td>
-                    <td>{{ file.last_modified }}</td>
-                    <td>
-                        <div class="btn-group" role="group">
-                            <button class="btn btn-secondary dropdown-toggle" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Select <span class="caret"></span></button>
-                            <ul class="dropdown-menu">
-                                 {# Production data by check in time #}
-                                {% if file.type == 0 %}
-                                    <a href="{% url 'estimator:file-analyze' pk=file.pk %}" class="dropdown-item">
-                                        Analyze Data
-                                    </a>
-
-                                    {# Production data by warehouse check in date #}
-                                {% elif file.type == 1 %}
-                                    <a href="{% url 'estimator:file-analyze' pk=file.pk %}" class="dropdown-item">
-                                        Analyze
-                                    </a>
-                                {% endif %}
-                                {#                                <a href="{% url 'estimator:file-update' file.pk %}" class="dropdown-item">#}
-                                {#                                    Update</a>#}
-                                <a href="{% url 'estimator:file-delete' file.pk %}" class="dropdown-item">
-                                    Delete
-                                </a>
-                            </ul>
-                        </div>
+                    <th scope="row" class="text-center">{{ file.id }}</th>
+                    <td scope="row" class="text-center">{{ file.start_period }}</td>
+                    <td scope="row" class="text-center">{{ file.end_period }}</td>
+                    <td scope="row">
+                        {% if file.type == 0 %}
+                            Production Data (by Check In Time)
+                        {% elif file.type == 1 %}
+                            Production Data (by Warehouse Checking Date)
+                        {% elif file.type == 2 %}
+                            Machine Maintenance History
+                        {% elif file.type == 3 %}
+                            Machine Bad Phenomenon Data (by Check In Time)
+                        {% elif file.type == 4 %}
+                            Machine Bad Phenomenon Data (by Warehouse Checking Date)
+                        {% elif file.type == 5 %}
+                            GBOM Data
+                        {% endif %}
+                    </td>
+                    <td scope="row">
+                        {# Let user analyze only production data type only #}
+                        {% if file.type == 0 %}
+                            <a href="" class="btn btn-primary">
+                                Analyze
+                            </a>
+                            <a href="{% url 'estimator:file-delete' file.pk %}" class="btn btn-danger">
+                                Delete
+                            </a>
+                        {% elif file.type == 1 %}
+                            <a href="" class="btn btn-primary">
+                                Analyze
+                            </a>
+                            <a href="{% url 'estimator:file-delete' file.pk %}" class="btn btn-danger">
+                                Delete
+                            </a>
+                        {% else %}
+                            <a href="{% url 'estimator:file-delete' file.pk %}" class="btn btn-danger">
+                                Delete
+                            </a>
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
         {% endif %}
     </table>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{% static 'estimator/js/jquery.blockUI.js' %}"></script>
+    <script>
+        $( document ).ready(function() {
+            $(".btn-primary").click(function(event){
+                $.blockUI();
+            });
+        })
+    </script>
 {% endblock %}

@@ -129,15 +129,6 @@ def SolveTheEqualtionByLeastSquare(Machine,MachineProcessedPiecesInDifferentPeri
 
     machine_yield_rate_history_instances = []
     for index in range(0, len(PeriodList)):
-
-        # Convert period string into week format
-        period_year = PeriodList[index][9:13]
-        period_month = PeriodList[index][13:15]
-        period_day = PeriodList[index][15:17]
-        date_format = '%Y-%m-%d'
-        period_date = datetime.datetime.strptime("{0}-{1}-{2}".format(period_year, period_month, period_day), date_format)
-        period_in_week = period_date.isocalendar()[1]
-
         # Delete existing data
         Machine_Yield_Rate_History.objects.filter(
             machine=Machine,
@@ -145,11 +136,18 @@ def SolveTheEqualtionByLeastSquare(Machine,MachineProcessedPiecesInDifferentPeri
             analyze_type=Type
         ).delete()
 
+        period = PeriodList[index].split("_")
+        start_period_str = period[0]
+        end_period_str = period[1]
+        start_period = convert_str_to_date(start_period_str)
+        end_period = convert_str_to_date(end_period_str)
+
         print("Inserting {0} machine_yield_rate_history_instance no. {1}".format(Machine, index))
         instance = Machine_Yield_Rate_History(
             machine=Machine,
             period=PeriodList[index],
-            period_in_week=period_in_week,
+            start_period=start_period,
+            end_period=end_period,
             yield_rate=YieldList[index],
             processed_pieces=PeicesList[index],
             analyze_type=Type
@@ -175,6 +173,10 @@ def ComputeWeeklyYieldWithLeastSquare():
         MachineProcessedPiecesInDifferentPeriodDict, BadPiecesByEMAve = GetMachineProcessedPiecesInDifferentPeriodDict(
             Machine, AnalyseFilePathInformationByPanelList)
         SolveTheEqualtionByLeastSquare(Machine, MachineProcessedPiecesInDifferentPeriodDict, BadPiecesByEMAve,"Panel")
+
+def convert_str_to_date(date_str):
+    date_format = '%Y%m%d'
+    return datetime.datetime.strptime(date_str, date_format).date()
 
 if __name__ == "__main__":
     AnalyseFilePathInformationByCellList, AnalyseFilePathInformationByPanelList = GetAnalyseFilePathInformationList()
