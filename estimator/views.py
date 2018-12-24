@@ -1,7 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from django.http import JsonResponse
 from django.views.generic import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
@@ -24,6 +23,7 @@ import json
 import collections
 import os
 import time
+
 
 # Begin of PeiKai's code
 def analyze_data(request, pk): # Rename from UploadAndAnalyze
@@ -77,6 +77,7 @@ def analyze_data(request, pk): # Rename from UploadAndAnalyze
     # return HttpResponse('上传分析完毕')
     return HttpResponseRedirect(reverse('estimator:report-list'))
 
+
 class IndexView(View):
     def get(self, request):
         if not request.user.is_authenticated:
@@ -84,15 +85,18 @@ class IndexView(View):
         else:
             return redirect('estimator:home')
 
+
 class HomeView(View):
     def get(self, request):
         return render(request, 'estimator/home.html')
+
 
 # BEGIN File Upload Views
 class FileList(ListView):
     model = File
     template_name_suffix = '-list'
     queryset = File.objects.all().order_by('last_modified')
+
 
 @login_required
 def file_create(request):
@@ -283,11 +287,13 @@ def file_create(request):
         form = FileForm()
     return render(request, 'estimator/file-create.html', {'form': form})
 
+
 class FileUpdate(UpdateView):
     model = File
     form_class = FileForm
     template_name_suffix = '-update'
     success_url = reverse_lazy('estimator:file-list')
+
 
 # Display a confirmation warning before deleting, if triggered with GET: it shows the warning(template view)
 # If triggered with POST then deletes, the template will receive object, which is the item to be deleted
@@ -301,97 +307,13 @@ class FileDelete(DeleteView):
         return reverse('estimator:file-list')
 # END File Upload Views
 
-# BEGIN Report Views
-class ReportDownload(FormView):
-    form_class = ReportForm
-    template_name = 'estimator/report-download.html'
-    success_url = reverse_lazy('estimator:report-download')
-
-# END Report Views
-
-# BEGIN Trend Views
-class TrendView(View):
-    def get(self, request):
-        form = TrendForm()
-        return render(request, 'estimator/trend.html', {'form': form})
-
-@csrf_exempt
-def get_machine_trends_and_maintenance(request):
-    if request.is_ajax():
-        # Get data sent using ajax
-        start_date_str = request.GET.get('start_date', None)
-        end_date_str = request.GET.get('end_date', None)
-        machine = request.GET.get('machine', None)
-        report_type = request.GET.get('report_type', None)
-
-        # Convert str to datetime object
-        date_format = '%Y-%m-%d'
-        start_date = datetime.datetime.strptime(start_date_str, date_format)
-        end_date = datetime.datetime.strptime(end_date_str, date_format)
-
-        # Get week number
-        start_week = start_date.isocalendar()[1]
-        end_week = end_date.isocalendar()[1]
-
-        machine_yield_rate = Machine_Yield_Rate_History.objects\
-            .values('period', 'yield_rate')\
-            .filter(machine=machine, start_period__range=(start_date, end_date), end_period__range=(start_date, end_date), analyze_type=report_type)\
-            .order_by('end_period')
-
-        machine_maintenance = Maintenance_History.objects\
-            .values('check_in_time')\
-            .filter(machine=machine, check_in_time__range=(start_date, end_date), check_out_time__range=(start_date, end_date))\
-            .order_by('check_in_time')
-
-        # # Count machine occurrences which has the same check_in_week
-        # distinct_machine_maintenance = collections.Counter(item['check_in_week'] for item in list(machine_maintenance))
-        #
-        # # Map distinct_machine_maintenance into an array of dictionaries
-        # maintenance_data = []
-        # for key, value in distinct_machine_maintenance.items():
-        #     maintenance_data.append({'check_in_week': key, 'occurrence': value})
-        #
-        # # Sort maintenance_data by check_in_week
-        # sorted_maintenance_data = sorted(list(maintenance_data), key=itemgetter('check_in_week'))
-        # print(sorted_maintenance_data)
-
-        response = json.dumps({
-            'yield_rate': list(machine_yield_rate),
-            # 'maintenance_history': list(machine_maintenance),
-        })
-
-        return JsonResponse(response, content_type='application/json', safe=False)
-
-def myconverter(o):
-    if isinstance(o, datetime.datetime):
-        return o.__str__()
-
-@csrf_exempt
-def machine_autocomplete(request):
-    if request.is_ajax():
-        machine = request.GET.get('search', None)
-        queryset = Machine_Yield_Rate_History.objects.filter(machine__startswith=machine)
-
-        # Because MySQL db backend doesn't support DISTINCT ON syntax,
-        # so manually filter duplicate machine names from the queryset
-        temp_items = []
-        machines = []
-        for item in queryset:
-            if item.machine not in machines:
-                temp_items.append(item)
-                machines.append(item.machine)
-
-        data = {
-            'list': machines,
-        }
-        return JsonResponse(data)
-# END Trend Views
 
 # END ProductionDataQuery Views
 class ProductionDataQuery(View):
     def get(self, request):
         form = ProductionDataQueryForm()
         return render(request, 'estimator/production-data-query.html', {'form': form})
+
 
 @csrf_exempt
 def query_production_data(request):
@@ -401,5 +323,4 @@ def query_production_data(request):
         value = request.GET.get('value', None)
 
         # Perform query here...
-
 # Create LOT and GBOM autocomplete here also...

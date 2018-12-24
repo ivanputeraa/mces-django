@@ -42,6 +42,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+
+    # Defaults
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -49,10 +51,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_mysql',
+
+    # Django Apps
+    'estimator',
+    'trends',
+    'report',
+
+    # Add-ons
     'bootstrap3',
     'bootstrap_datepicker_plus',
-    'estimator',
-    'reset_migrations'
+    'reset_migrations',
 ]
 
 MIDDLEWARE = [

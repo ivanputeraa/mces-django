@@ -10,7 +10,7 @@
         <button class="btn btn-primary" id="go_button" type="submit">Go</button>
     </form>
     <br>
-    <div id="chartContainer" style="height: 400px; width: 100%;"></div>
+    <div id="chartContainer" style="height: 500px; width: 100%;"></div>
 {% endblock %}
 
 {% block javascript %}
@@ -24,7 +24,7 @@
             $("#id_machine").on('keyup', function(){
                 var value = $(this).val();
                 $.ajax({
-                    url: "{% url 'estimator:machine-autocomplete' %}",
+                    url: "{% url 'trends:machine-autocomplete' %}",
                     data: {
                         'search': value
                     },
@@ -52,7 +52,7 @@
                 maintenance_data = []
                 var form = $(this).closest("form");
                 $.ajax({
-                    url: "{% url 'estimator:get-machine-trends-and-maintenance' %}",
+                    url: "{% url 'trends:get-machine-trends-and-maintenance' %}",
                     data: form.serialize(),
                     dataType: 'json',
                     success: function (response) {
@@ -70,7 +70,7 @@
                             } else if (key == 'maintenance_history') {
                                 $.each(value, function (key, value) {
                                     console.log(key, value)
-                                    maintenance_data.push({'x': value['period'], 'y': value['occurrence']})
+                                    maintenance_data.push({'label': value['period'], 'y': value['occurrence']})
                                 })
                             }
                          })
@@ -99,7 +99,7 @@
                         fontFamily: "Tahoma",
                     },
                     axisX: {
-                        labelAngle: -30
+                        labelAngle: -75
                     },
                     axisY: {
                         title: "Estimated Yield Rate",
