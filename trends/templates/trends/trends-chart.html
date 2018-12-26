@@ -57,25 +57,21 @@
                     dataType: 'json',
                     success: function (response) {
                         data = jQuery.parseJSON(response)
-                        console.log(data)
 
                         $.each(data, function (key, value) {
                             if (key == 'yield_rate') {
                                 $.each(value, function (key, value) {
-                                    console.log(key, value)
 
                                     // Source: https://jsfiddle.net/canvasjs/6ftyg155/
                                     trend_data.push({'label': value['period'], 'y': value['yield_rate']})
                                 })
                             } else if (key == 'maintenance_history') {
                                 $.each(value, function (key, value) {
-                                    console.log(key, value)
                                     maintenance_data.push({'label': value['period'], 'y': value['occurrence']})
                                 })
                             }
                          })
-                        console.log(trend_data)
-                        console.log(maintenance_data)
+
                         var machine = $('#id_machine').val()
                         renderChart(machine, trend_data, maintenance_data)
 
@@ -96,10 +92,9 @@
                     exportEnabled: true,
                     title: {
                         text: "Machine Yield Rate and Maintenance Chart (" + machine + ")",
-                        fontFamily: "Tahoma",
                     },
                     axisX: {
-                        labelAngle: -75
+                        labelAngle: 0
                     },
                     axisY: {
                         title: "Estimated Yield Rate",
@@ -107,7 +102,6 @@
                         tickColor: "#C24642",
                         labelFontColor: "#C24642",
                         titleFontColor: "#C24642",
-                        minimum: 0,
                         maximum:1
                     },
                     axisY2: {

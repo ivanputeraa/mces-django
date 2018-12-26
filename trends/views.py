@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.core.serializers.json import DjangoJSONEncoder
 
 from .forms import *
 
@@ -29,68 +30,43 @@ def get_machine_trends_and_maintenance(request):
         start_date = datetime.datetime.strptime(start_date_str, date_format)
         end_date = datetime.datetime.strptime(end_date_str, date_format)
 
-        # Get week number
-        start_week = start_date.isocalendar()[1]
-        end_week = end_date.isocalendar()[1]
-
-        machine_yield_rates = Machine_Yield_Rate_History.objects\
-            .values('period', 'yield_rate')\
-            .filter(machine=machine, start_period__range=(start_date, end_date), end_period__range=(start_date, end_date), analyze_type=report_type)\
+        machine_yield_rates = Machine_Yield_Rate_History.objects \
+            .values('period', 'yield_rate') \
+            .filter(machine=machine, start_period__range=(start_date, end_date), end_period__range=(start_date, end_date), analyze_type=report_type) \
             .order_by('end_period')
 
-        yield_rate_data = []
-        for item in machine_yield_rates:
-            yield_rate_data.append(item)
-
-        machine_yield_rate_periods = Machine_Yield_Rate_History.objects \
-            .values('start_period', 'end_period') \
-            .filter(machine=machine, start_period__range=(start_date, end_date),
-                    end_period__range=(start_date, end_date), analyze_type=report_type) \
-            .order_by('end_period')
-
-        machine_maintenance = Maintenance_History.objects\
-            .values('check_in_time')\
-            .filter(machine=machine, check_in_time__range=(start_date, end_date), check_out_time__range=(start_date, end_date))\
+        machine_maintenance = Maintenance_History.objects \
+            .values('check_in_time', 'employee_id', 'operation_class', 'description', 'solution', 'reason') \
+            .filter(machine=machine, check_in_time__range=(start_date, end_date)) \
             .order_by('check_in_time')
 
-        start_period_array = []
-        end_period_array = []
-        for item in machine_yield_rate_periods:
-            start_period_array.append(item['start_period'])
-            end_period_array.append(item['end_period'])
+        period_date_dict = {}
+        date_format = '%Y%m%d'
+        for index, item in enumerate(machine_yield_rates):
+            period = item['period'].split('_')
+            period_date_dict[index] = {}
+            period_date_dict[index]['start_period'] = datetime.datetime.strptime(period[0], date_format).date()
+            period_date_dict[index]['end_period'] = datetime.datetime.strptime(period[1], date_format).date()
 
-        maintenance_check_in_date = []
-        for item in machine_maintenance:
-            maintenance_check_in_date.append(item['check_in_time'].date())
+        maintenance_occurrence_dict = {};
+        occurrence_counter = 0
+        loop_counter = 0
+        for key, value in period_date_dict.items():
+            for item in list(machine_maintenance):
+                if item['check_in_time'].date() >= value['start_period'] and item['check_in_time'].date() <= value['end_period']:
+                    occurrence_counter = occurrence_counter + 1
+            maintenance_occurrence_dict[loop_counter] = {}
+            maintenance_occurrence_dict[loop_counter]['period'] = value['start_period'].strftime(date_format) + "_" + value['end_period'].strftime(date_format)
+            maintenance_occurrence_dict[loop_counter]['occurrence'] = occurrence_counter
+            occurrence_counter = 0
+            loop_counter += loop_counter + 1
 
-        maintenance_list = []
-        for item in maintenance_check_in_date:
-            for index, start_period in enumerate(start_period_array):
-                if item > start_period_array[index] and item < end_period_array[index]:
-                    maintenance_list.append(item)
-
-        # # Count machine occurrences which has the same check_in_week
-        # distinct_machine_maintenance = collections.Counter(item['check_in_week'] for item in list(machine_maintenance))
-        #
-        # # Map distinct_machine_maintenance into an array of dictionaries
-        # maintenance_data = []
-        # for key, value in distinct_machine_maintenance.items():
-        #     maintenance_data.append({'check_in_week': key, 'occurrence': value})
-        #
-        # # Sort maintenance_data by check_in_week
-        # sorted_maintenance_data = sorted(list(maintenance_data), key=itemgetter('check_in_week'))
-        # print(sorted_maintenance_data)
-
-        response = json.dumps({
+        result = json.dumps({
             'yield_rate': list(machine_yield_rates),
-            # 'maintenance_history': list(machine_maintenance),
+            'maintenance_history': maintenance_occurrence_dict,
         })
 
-        return JsonResponse(response, content_type='application/json', safe=False)
-
-def myconverter(o):
-    if isinstance(o, datetime.datetime):
-        return o.__str__()
+        return JsonResponse(result, content_type='application/json', safe=False)
 
 @csrf_exempt
 def machine_autocomplete(request):
