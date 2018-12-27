@@ -1,4 +1,5 @@
 {% extends 'estimator/base.html' %}
+{% load render_table from django_tables2 %}
 {% load bootstrap3 %}
 
 {% block content %}
@@ -8,5 +9,6 @@
         {% csrf_token %}
         {% bootstrap_form form %}
         <button class="btn btn-primary" id="go_button" type="submit">Go</button>
+        {% render_table table %}
     </form>
 {% endblock %}

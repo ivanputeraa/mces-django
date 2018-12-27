@@ -50,6 +50,9 @@
 
                 trend_data = []
                 maintenance_data = []
+                min_yield_rate = 0
+                max_yield_rate = 1
+
                 var form = $(this).closest("form");
                 $.ajax({
                     url: "{% url 'trends:get-machine-trends-and-maintenance' %}",
@@ -57,6 +60,7 @@
                     dataType: 'json',
                     success: function (response) {
                         data = jQuery.parseJSON(response)
+                        {#console.log(response)#}
 
                         $.each(data, function (key, value) {
                             if (key == 'yield_rate') {
@@ -65,15 +69,17 @@
                                     // Source: https://jsfiddle.net/canvasjs/6ftyg155/
                                     trend_data.push({'label': value['period'], 'y': value['yield_rate']})
                                 })
+                            } else if (key == 'min_yield_rate') {
+                                min_yield_rate = value
                             } else if (key == 'maintenance_history') {
                                 $.each(value, function (key, value) {
                                     maintenance_data.push({'label': value['period'], 'y': value['occurrence']})
                                 })
                             }
-                         })
+                        })
 
                         var machine = $('#id_machine').val()
-                        renderChart(machine, trend_data, maintenance_data)
+                        renderChart(machine, trend_data, maintenance_data, min_yield_rate, max_yield_rate)
 
                     }, error: function(error) {
                         $('#chartContainer').hide()
@@ -85,7 +91,7 @@
 
 
             {# Line chart rendering function #}
-            function renderChart(machine, trend_data = [], maintenance_data = []) {
+            function renderChart(machine, trend_data = [], maintenance_data = [], min_yield_rate, max_yield_rate) {
                 var chart = new CanvasJS.Chart("chartContainer", {
                     animationEnabled: true,
                     exportFileName: "Machine Yield Rate and Maintenance Chart (" + machine + ")",  //Give any name accordingly
@@ -102,6 +108,7 @@
                         tickColor: "#C24642",
                         labelFontColor: "#C24642",
                         titleFontColor: "#C24642",
+                        minimum:min_yield_rate,
                         maximum:1
                     },
                     axisY2: {
@@ -125,7 +132,7 @@
                                 content += "<br/>";
                             }
                             return content;
-                         }
+                        }
                     },
                     legend: {
                         cursor: "pointer",
