@@ -7,7 +7,7 @@
 {% block content %}
     <h1 class="mt-5">Report Download</h1>
 
-   <form method="post" id="report-download-form">
+   <form action="{% url 'report:download' %}" method="post" id="report-download-form">
         {% csrf_token %}
         {% bootstrap_form form %}
         <button class="btn btn-primary" id="go_button" type="submit">Download</button>

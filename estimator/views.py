@@ -4,23 +4,19 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
-from django.db.models import Count
 from django.conf import settings
+from django_tables2 import RequestConfig
 
 from .forms import *
 from .models import *
-from datetime import datetime
-from operator import itemgetter
+from .tables import MachineTables
 
 from shutil import copyfile
 from estimator import DataPreprocess
 from estimator import EM_Algorithm2
 from estimator import LinearLeastSquaresToSolveWeeklyYield
 
-import datetime
 import pandas as pd
-import json
-import collections
 import os
 import time
 
@@ -315,12 +311,21 @@ class ProductionDataQuery(View):
         return render(request, 'estimator/production-data-query.html', {'form': form})
 
 
+
 @csrf_exempt
 def query_production_data(request):
     if request.is_ajax():
         # Retrieve user input from frontend
         input_type = request.GET.get('input_type', None)
         value = request.GET.get('value', None)
+
+    table = MachineTables(Machine.objects.all())
+    RequestConfig(request).configure(table)
+    return render(request, 'tutorial/production-data-query.html', {'table': table})
+
+
+    #istekler = Machine.objects.all()
+    #return render(request, 'estimator/production-data-query.html', locals())
 
         # Perform query here...
 # Create LOT and GBOM autocomplete here also...

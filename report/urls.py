@@ -5,5 +5,6 @@ from . import views
 app_name = 'report'
 
 urlpatterns = [
-    re_path(r'^download/$', views.ReportDownload.as_view(), name='report-download'),
+    re_path(r'^download/$', views.ReportDownload.as_view(), name='download-page'),
+    re_path(r'^download/report/$', views.download, name='download'),
 ]

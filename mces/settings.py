@@ -37,7 +37,7 @@ SECRET_KEY = '+r5rbj9!)_=l1-#=od7(hg5i7xto41q2di8pbf9@l%hq56eyo6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['140.115.53.45', '127.0.0.1']
 
 # Application definition
 
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django_tables2',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -163,6 +164,7 @@ STATIC_URL = '/static/'
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static/'),
+    os.path.join(BASE_DIR, 'report/temp_report_file/'),
 )
 
 MEDIA_URL = '/media/'
