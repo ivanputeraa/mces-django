@@ -2,12 +2,12 @@
 {% load bootstrap3 %}
 
 {% block content %}
-    <h1 class="mt-5">Trend</h1>
+    <h1 class="mt-5">Machine Trend</h1>
 
     <form method="post" id="trend_form">
         {% csrf_token %}
         {% bootstrap_form form %}
-        <button class="btn btn-primary" id="go_button" type="submit">Go</button>
+        <button class="btn btn-primary" id="go_button" type="submit">Show Chart</button>
     </form>
     <br>
     <div id="chartContainer" style="height: 500px; width: 100%;"></div>

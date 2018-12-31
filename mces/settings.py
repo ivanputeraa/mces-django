@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'report',
 
     # Add-ons
+    'bootstrap4',
     'bootstrap3',
     'bootstrap_datepicker_plus',
     'reset_migrations',
@@ -106,7 +107,7 @@ DATABASES = {
 
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mces_dev', # DO NOT FORGET TO CHANGE DB NAME EACH TIME YOU USE FOR DEVELOPMENT / PRODUCTION
+        'NAME': 'mces_prod', # DO NOT FORGET TO CHANGE DB NAME EACH TIME YOU USE FOR DEVELOPMENT / PRODUCTION
         'USER': 'root',
         'PASSWORD': 'mces',
         'HOST': 'localhost',

@@ -5,7 +5,7 @@
 {% block title %}Report List{% endblock %}
 
 {% block content %}
-    <h1 class="mt-5">Report Download</h1>
+    <h1 class="mt-5">Report</h1>
 
    <form action="{% url 'report:download' %}" method="post" id="report-download-form">
         {% csrf_token %}
