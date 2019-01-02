@@ -23,55 +23,55 @@ import time
 
 # Begin of PeiKai's code
 def analyze_data(request, pk): # Rename from UploadAndAnalyze
+    if request.is_ajax() and request.method == 'POST':
 
-    file = File.objects.values_list('file', flat=True).filter(pk=pk)
-    file_path = os.path.join(settings.MEDIA_ROOT, file[0])
+        file = File.objects.values_list('file', flat=True).filter(pk=pk)
+        file_path = os.path.join(settings.MEDIA_ROOT, file[0])
 
-    # return HttpResponse(os.path.join(settings.MEDIA_ROOT, file_path))
+        # return HttpResponse(os.path.join(settings.MEDIA_ROOT, file_path))
 
-    # Read the prod data file
-    DataFlow = pd.read_csv(file_path, encoding='big5')
+        # Read the prod data file
+        DataFlow = pd.read_csv(file_path, encoding='big5')
 
-    # Check whether prod data is the correct one
-    if '入庫日期' not in DataFlow.columns.values:
-        return HttpResponse('production data is wrong')
-    else:  # 根据入库时间重命名
-        FinishTimeList = DataFlow['入庫日期'].values.copy()
-        FinishTimeList.sort()
-        FinishTimeRange = FinishTimeList[0] + "_" + FinishTimeList[len(FinishTimeList) - 1]
-        FinishTimeRange = FinishTimeRange.replace("/", "_")
+        # Check whether prod data is the correct one
+        if '入庫日期' not in DataFlow.columns.values:
+            return HttpResponse('production data is wrong')
+        else:  # 根据入库时间重命名
+            FinishTimeList = DataFlow['入庫日期'].values.copy()
+            FinishTimeList.sort()
+            FinishTimeRange = FinishTimeList[0] + "_" + FinishTimeList[len(FinishTimeList) - 1]
+            FinishTimeRange = FinishTimeRange.replace("/", "_")
 
-        # RawDataPath = os.path.join(os.getcwd() + "\\analyse\\RawData", FinishTimeRange + "_RawData.csv")
-        RawDataPath = os.path.join(os.getcwd() + "/estimator/RawData", FinishTimeRange + "_RawData.csv")
+            # RawDataPath = os.path.join(os.getcwd() + "\\analyse\\RawData", FinishTimeRange + "_RawData.csv")
+            RawDataPath = os.path.join(os.getcwd() + "/estimator/RawData", FinishTimeRange + "_RawData.csv")
 
-        ProcessedDataPath = os.path.join(os.getcwd() + "/estimator/ProcessedData", FinishTimeRange + "_ProcessedData.csv")
-        ProcessedDataPathByCellNotSplit = ProcessedDataPath.replace("ProcessedData.csv", "ProcessedDataByCellNotSplit.csv")
-        ProcessedDataPathByPanelNotSplit = ProcessedDataPath.replace("ProcessedData.csv", "ProcessedDataByPanelNotSplit.csv")
+            ProcessedDataPath = os.path.join(os.getcwd() + "/estimator/ProcessedData", FinishTimeRange + "_ProcessedData.csv")
+            ProcessedDataPathByCellNotSplit = ProcessedDataPath.replace("ProcessedData.csv", "ProcessedDataByCellNotSplit.csv")
+            ProcessedDataPathByPanelNotSplit = ProcessedDataPath.replace("ProcessedData.csv", "ProcessedDataByPanelNotSplit.csv")
 
-        ReportPath = os.path.join(os.getcwd() + "/estimator/Report", FinishTimeRange + "_Report.csv")
-        ReportPathByCellNotSplit = ReportPath.replace("Report.csv", "ReportByCellNotSplit.csv")
-        ReportPathByPanelNotSplit = ReportPath.replace("Report.csv", "ReportByPanelNotSplit.csv")
+            ReportPath = os.path.join(os.getcwd() + "/estimator/Report", FinishTimeRange + "_Report.csv")
+            ReportPathByCellNotSplit = ReportPath.replace("Report.csv", "ReportByCellNotSplit.csv")
+            ReportPathByPanelNotSplit = ReportPath.replace("Report.csv", "ReportByPanelNotSplit.csv")
 
-        copyfile(file_path, RawDataPath)
+            copyfile(file_path, RawDataPath)
 
-        # Data pre processing
-        DataPreprocess.ProcessData(RawDataPath, ProcessedDataPath, PerfectMachineList=[])
+            # Data pre processing
+            DataPreprocess.ProcessData(RawDataPath, ProcessedDataPath, PerfectMachineList=[])
 
-        # Analyze pre processed data and generate cell-based report
-        print("Start Analyse By Panel Not Split", time.time())
-        EM_Algorithm2.micro_crack_esimator(ProcessedDataPathByCellNotSplit, ReportPathByCellNotSplit)
-        print("Finish", time.time())
+            # Analyze pre processed data and generate cell-based report
+            print("Start Analyse By Panel Not Split", time.time())
+            EM_Algorithm2.micro_crack_esimator(ProcessedDataPathByCellNotSplit, ReportPathByCellNotSplit)
+            print("Finish", time.time())
 
-        # Analyze pre processed data and generate panel-based report
-        print("Start Analyse By Panel Not Split", time.time())
-        EM_Algorithm2.micro_crack_esimator(ProcessedDataPathByPanelNotSplit, ReportPathByPanelNotSplit)
-        print("Finish", time.time())
+            # Analyze pre processed data and generate panel-based report
+            print("Start Analyse By Panel Not Split", time.time())
+            EM_Algorithm2.micro_crack_esimator(ProcessedDataPathByPanelNotSplit, ReportPathByPanelNotSplit)
+            print("Finish", time.time())
 
-        # Linear Least Squares To Solve Weekly
-        LinearLeastSquaresToSolveWeeklyYield.ComputeWeeklyYieldWithLeastSquare()
+            # Linear Least Squares To Solve Weekly
+            LinearLeastSquaresToSolveWeeklyYield.ComputeWeeklyYieldWithLeastSquare()
 
-    # return HttpResponse('上传分析完毕')
-    return HttpResponseRedirect(reverse('estimator:report-list'))
+            return HttpResponse('Done')
 
 
 class IndexView(View):

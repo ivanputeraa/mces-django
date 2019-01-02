@@ -44,16 +44,16 @@
                     <td scope="row">
                         {# Let user analyze only production data type only #}
                         {% if file.type == 0 %}
-                            <a href="" class="btn btn-primary">
+                            <button id="button-{{ file.pk }}" data-href="{% url 'estimator:file-analyze' file.pk %}" class="btn btn-primary">
                                 Analyze
-                            </a>
+                            </button>
                             <a href="{% url 'estimator:file-delete' file.pk %}" class="btn btn-danger">
                                 Delete
                             </a>
                         {% elif file.type == 1 %}
-                            <a href="" class="btn btn-primary">
+                            <button id="button-{{ file.pk }}" data-href="{% url 'estimator:file-analyze' file.pk %}" class="btn btn-primary">
                                 Analyze
-                            </a>
+                            </button>
                             <a href="{% url 'estimator:file-delete' file.pk %}" class="btn btn-danger">
                                 Delete
                             </a>
@@ -73,8 +73,28 @@
     <script src="{% static 'estimator/js/jquery.blockUI.js' %}"></script>
     <script>
         $( document ).ready(function() {
-            $(".btn-primary").click(function(event){
-                $.blockUI();
+
+            // Source:
+            // https://stackoverflow.com/questions/47342683/django-pass-a-list-items-id-pk-to-the-view-with-jquery-ajax
+            $(".btn-primary").click(function(){
+                $.blockUI({
+                    message: '<p><img height="25" width="25" src="{% static 'estimator/gif/busy.gif' %}" /> Analysis in process. Do not refresh or close the page while the page still running...</p>'
+                });
+
+                var postData = {
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                }
+                $.ajax({
+                    type: "POST",
+                    url: $(this).attr("data-href"),
+                    data: postData,
+                    success: function() {
+                        $.unblockUI({
+                            onUnblock: function(){ alert('Analysis complete. To download the report, please go to ' +
+                                'the Report page. Thank you.'); }
+                        });
+                    }
+                })
             });
         })
     </script>

@@ -107,7 +107,7 @@ DATABASES = {
 
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mces_prod', # DO NOT FORGET TO CHANGE DB NAME EACH TIME YOU USE FOR DEVELOPMENT / PRODUCTION
+        'NAME': 'mces_dev', # DO NOT FORGET TO CHANGE DB NAME EACH TIME YOU USE FOR DEVELOPMENT / PRODUCTION
         'USER': 'root',
         'PASSWORD': 'mces',
         'HOST': 'localhost',

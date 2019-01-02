@@ -3,19 +3,23 @@ import pandas as pd
 import numpy as np
 from numpy.linalg import lstsq
 from estimator.models import Machine_Yield_Rate_History
-import time, datetime
+import time
+import datetime
+
 
 class AnalyseFilePathInformation(object):
     def __init__(self,ProductionProcessFilePath,ReportFilePath):
         self.ProductionProcessFilePath = ProductionProcessFilePath
         self.ReportFilePath = ReportFilePath
+
+
 class Equaltion(object):
     def __init__(self,MachineProcessedPiecesInDifferentPeriodDict = {},BadYieldRate=0):
         self.MachineProcessedPiecesInDifferentPeriodDict = MachineProcessedPiecesInDifferentPeriodDict
         self.BadYieldRate = BadYieldRate
+
+
 def GetAnalyseFilePathInformationList():
-    # ProcessedDataDirPath = os.getcwd() + "\\ProcessedData"
-    # ProcessedDataDirPath = os.getcwd() + "\\analyse\\ProcessedData"
     ProcessedDataDirPath = os.getcwd() + "/estimator/ProcessedData"
     AnalyseFilePathInformationByCellList = []
     AnalyseFilePathInformationByPanelList = []
@@ -34,7 +38,8 @@ def GetAnalyseFilePathInformationList():
                 ReportFilePath = ReportFilePath.replace("ProcessedData", "Report")
                 AnalyseFilePathInformationByPanelList.append(AnalyseFilePathInformation(ProductionProcessFilePath, ReportFilePath))
     return AnalyseFilePathInformationByCellList,AnalyseFilePathInformationByPanelList
-#Get ALl Machine 
+
+# Get All Machine
 def GetAllMachineFromReport(AnalyseFilePathInformationList):
     AllMachineDict = {}
     for AnalyseFilePathInfo in AnalyseFilePathInformationList:
@@ -44,6 +49,7 @@ def GetAllMachineFromReport(AnalyseFilePathInformationList):
             MachineNameArray = MachineName.split(":")
             AllMachineDict[MachineNameArray[1]] = 1
     return AllMachineDict
+
 
 def GetMachineProcessedPiecesInDifferentPeriodDict(Machine, AnalyseFilePathInformationList):
     MachineProcessedPiecesInDifferentPeriodDict = {}
@@ -112,7 +118,9 @@ def GetMachineProcessedPiecesInDifferentPeriodDict(Machine, AnalyseFilePathInfor
                             CurrentMachineProcessedPiecesInDifferentPeriodDict[MachineInDifferentPeriod]
                 BadPiecesByEMAve += BadPiecesByEM
     return MachineProcessedPiecesInDifferentPeriodDict,BadPiecesByEMAve
-#Solve The Equaltion By LeastSquares
+
+
+# Solve The Equation By LeastSquares
 def SolveTheEqualtionByLeastSquare(Machine,MachineProcessedPiecesInDifferentPeriodDict,BadPiecesByEMAve,Type ="Cell"):
     PeriodList = []
     PeicesList = []
@@ -142,7 +150,7 @@ def SolveTheEqualtionByLeastSquare(Machine,MachineProcessedPiecesInDifferentPeri
         start_period = convert_str_to_date(start_period_str)
         end_period = convert_str_to_date(end_period_str)
 
-        print("Inserting {0} machine_yield_rate_history_instance no. {1}".format(Machine, index))
+        # print("{0} machine_yield_rate_history_instance no. {1}".format(Machine, index))
         instance = Machine_Yield_Rate_History(
             machine=Machine,
             period=PeriodList[index],
@@ -153,7 +161,16 @@ def SolveTheEqualtionByLeastSquare(Machine,MachineProcessedPiecesInDifferentPeri
             analyze_type=Type
         )
         machine_yield_rate_history_instances.append(instance)
+
+    # Inserting machine_yield_rate_history_instance to DB
     Machine_Yield_Rate_History.objects.bulk_create(machine_yield_rate_history_instances)
+    # DB insertion success!
+
+
+def convert_str_to_date(date_str):
+    date_format = '%Y%m%d'
+    return datetime.datetime.strptime(date_str, date_format).date()
+
 
 def ComputeWeeklyYieldWithLeastSquare():
     AnalyseFilePathInformationByCellList, AnalyseFilePathInformationByPanelList = GetAnalyseFilePathInformationList()
@@ -174,9 +191,6 @@ def ComputeWeeklyYieldWithLeastSquare():
             Machine, AnalyseFilePathInformationByPanelList)
         SolveTheEqualtionByLeastSquare(Machine, MachineProcessedPiecesInDifferentPeriodDict, BadPiecesByEMAve,"Panel")
 
-def convert_str_to_date(date_str):
-    date_format = '%Y%m%d'
-    return datetime.datetime.strptime(date_str, date_format).date()
 
 if __name__ == "__main__":
     AnalyseFilePathInformationByCellList, AnalyseFilePathInformationByPanelList = GetAnalyseFilePathInformationList()
