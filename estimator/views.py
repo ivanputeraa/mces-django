@@ -1,11 +1,12 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect, HttpResponse, HttpResponseRedirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.conf import settings
 from django_tables2 import RequestConfig
+from django.http import JsonResponse
 
 from .forms import *
 from .models import *
@@ -28,21 +29,22 @@ def analyze_data(request, pk): # Rename from UploadAndAnalyze
         file = File.objects.values_list('file', flat=True).filter(pk=pk)
         file_path = os.path.join(settings.MEDIA_ROOT, file[0])
 
-        # return HttpResponse(os.path.join(settings.MEDIA_ROOT, file_path))
-
         # Read the prod data file
         DataFlow = pd.read_csv(file_path, encoding='big5')
 
         # Check whether prod data is the correct one
         if '入庫日期' not in DataFlow.columns.values:
-            return HttpResponse('production data is wrong')
+            response = JsonResponse({
+                "success": False,
+                "error": "production data is wrong"
+            })
+            response.status_code = 403
         else:  # 根据入库时间重命名
             FinishTimeList = DataFlow['入庫日期'].values.copy()
             FinishTimeList.sort()
             FinishTimeRange = FinishTimeList[0] + "_" + FinishTimeList[len(FinishTimeList) - 1]
             FinishTimeRange = FinishTimeRange.replace("/", "_")
 
-            # RawDataPath = os.path.join(os.getcwd() + "\\analyse\\RawData", FinishTimeRange + "_RawData.csv")
             RawDataPath = os.path.join(os.getcwd() + "/estimator/RawData", FinishTimeRange + "_RawData.csv")
 
             ProcessedDataPath = os.path.join(os.getcwd() + "/estimator/ProcessedData", FinishTimeRange + "_ProcessedData.csv")
@@ -71,8 +73,12 @@ def analyze_data(request, pk): # Rename from UploadAndAnalyze
             # Linear Least Squares To Solve Weekly
             LinearLeastSquaresToSolveWeeklyYield.ComputeWeeklyYieldWithLeastSquare()
 
-            return HttpResponse('Done')
-
+            response = JsonResponse({
+                "success": True,
+                "message": "Analyze done"
+            })
+            response.status_code = 200
+        return response
 
 class IndexView(View):
     def get(self, request):
@@ -104,6 +110,7 @@ def file_create(request):
             instances = []
             df = pd.read_csv(file, encoding='big5', header=0)
 
+            # ALTER TABLE estimator_production_data_by_time CONVERT TO CHARACTER SET big5 COLLATE big5_chinese_ci;
             if file_type == 0:
                 if 'BADNUM' not in df.columns.values:
                     messages.error(request,
@@ -185,7 +192,7 @@ def file_create(request):
                     reason_list = df['分析 異常/故障原因'].values.copy()
                     replace_parts_list = df['備品需求'].values.copy()
 
-                    for counter in range(0, len(df) - 1):  # Exclude last row
+                    for counter in range(0, len(df)):  # Exclude last row
 
                         # Convert check_in_time and check_out_time into week
                         check_in_time = str(check_in_time_list[counter]).replace('/', '-')
@@ -298,9 +305,21 @@ class FileDelete(DeleteView):
     template_name_suffix = '-delete'
     success_url = reverse_lazy('estimator:file-list')
 
-    # Notice get_success_url is defined here and not in the model, because the model will be deleted
-    def get_success_url(self):
-        return reverse('estimator:file-list')
+    def post(self, request, *args, **kwargs):
+        file_id = self.kwargs.get('pk')
+        file = File.objects.values_list('file', flat=True).filter(id=file_id)
+        file_path = os.path.join(settings.MEDIA_ROOT + file[0])
+
+        # Remove the actual file from server
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        else:
+            print("The file does not exist")
+
+        # Remove object from db
+        get_object_or_404(File, pk=file_id).delete()
+
+        return HttpResponseRedirect(reverse('estimator:file-list'))
 # END File Upload Views
 
 

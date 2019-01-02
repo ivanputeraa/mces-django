@@ -88,10 +88,14 @@
                     type: "POST",
                     url: $(this).attr("data-href"),
                     data: postData,
-                    success: function() {
+                    success: function(response) {
                         $.unblockUI({
-                            onUnblock: function(){ alert('Analysis complete. To download the report, please go to ' +
-                                'the Report page. Thank you.'); }
+                            onUnblock: function(){ alert(response.message); }
+                        });
+                    },
+                    error: function (error) {
+                        $.unblockUI({
+                            onUnblock: function(){ alert(error.responseJSON.error); }
                         });
                     }
                 })
