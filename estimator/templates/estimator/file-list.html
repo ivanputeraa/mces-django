@@ -78,7 +78,7 @@
             // https://stackoverflow.com/questions/47342683/django-pass-a-list-items-id-pk-to-the-view-with-jquery-ajax
             $(".btn-primary").click(function(){
                 $.blockUI({
-                    message: '<p><img height="25" width="25" src="{% static 'estimator/gif/busy.gif' %}" /> Analysis in process. Do not refresh or close the page while the page still running...</p>'
+                    message: '<p><img height="25" width="25" src="{% static 'estimator/gif/busy.gif' %}" /> Analysis in process</p><p><strong>Do not refresh or close the page while the page still running...</strong></p>'
                 });
 
                 var postData = {

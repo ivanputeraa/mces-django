@@ -150,7 +150,7 @@ def SolveTheEqualtionByLeastSquare(Machine,MachineProcessedPiecesInDifferentPeri
         start_period = convert_str_to_date(start_period_str)
         end_period = convert_str_to_date(end_period_str)
 
-        # print("{0} machine_yield_rate_history_instance no. {1}".format(Machine, index))
+        print("{0} machine_yield_rate_history_instance no. {1}".format(Machine, index))
         instance = Machine_Yield_Rate_History(
             machine=Machine,
             period=PeriodList[index],

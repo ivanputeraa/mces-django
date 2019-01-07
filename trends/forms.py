@@ -9,12 +9,35 @@ class TrendForm(forms.Form):
     )
 
     start_date = forms.DateField(
-        widget=DatePickerInput(format='%Y-%m-%d'),
+        widget=DatePickerInput(
+            attrs={
+                "autocomplete": "off"  # disable input history
+            },
+            options={
+                "format": "YYYY-MM-DD",
+                "minDate": "2018-01-01",  # PROJECT START DATE
+                "useCurrent": False,
+                "showClose": False,
+                "showClear": False,
+                "showTodayButton": False,
+            }
+        ),
         required=True
     )
 
     end_date = forms.DateField(
-        widget=DatePickerInput(format='%Y-%m-%d'),
+        widget=DatePickerInput(
+            attrs={
+                "autocomplete": "off"  # disable input history
+            },
+            options={
+                "format": "YYYY-MM-DD",
+                "useCurrent": False,
+                "showClose": False,
+                "showClear": False,
+                "showTodayButton": False,
+            }
+        ),
         required=True
     )
 

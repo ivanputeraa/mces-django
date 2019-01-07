@@ -31,11 +31,13 @@ def get_machine_trends_and_maintenance(request):
         start_date = datetime.datetime.strptime(start_date_str, date_format)
         end_date = datetime.datetime.strptime(end_date_str, date_format)
 
+        # Query yield rate based on the input parameters
         machine_yield_rates = Machine_Yield_Rate_History.objects \
             .values('period', 'yield_rate') \
             .filter(machine=machine, start_period__range=(start_date, end_date), end_period__range=(start_date, end_date), analyze_type=report_type) \
             .order_by('end_period')
 
+        # Get min yield rate
         min_yield_rate = Machine_Yield_Rate_History.objects.values_list('yield_rate')\
             .filter(machine=machine,
                     start_period__range=(start_date, end_date),
@@ -43,11 +45,13 @@ def get_machine_trends_and_maintenance(request):
                     analyze_type=report_type)\
             .aggregate(Min('yield_rate'))
 
+        # Query maintenance data period based on the input parameters
         machine_maintenance = Maintenance_History.objects \
-            .values('check_in_time', 'employee_id', 'operation_class', 'description', 'solution', 'reason') \
+            .values('check_in_time') \
             .filter(machine=machine, check_in_time__range=(start_date, end_date)) \
             .order_by('check_in_time')
 
+        # Split period into two (start and end period)
         period_date_dict = {}
         date_format = '%Y%m%d'
         for index, item in enumerate(machine_yield_rates):
@@ -56,7 +60,8 @@ def get_machine_trends_and_maintenance(request):
             period_date_dict[index]['start_period'] = datetime.datetime.strptime(period[0], date_format).date()
             period_date_dict[index]['end_period'] = datetime.datetime.strptime(period[1], date_format).date()
 
-        maintenance_occurrence_dict = {};
+        # Calculate machine maintenance occurrences in between the start and end periods
+        maintenance_occurrence_dict = {}
         occurrence_counter = 0
         loop_counter = 0
         for key, value in period_date_dict.items():
@@ -69,6 +74,7 @@ def get_machine_trends_and_maintenance(request):
             occurrence_counter = 0
             loop_counter += loop_counter + 1
 
+        # Parse all the results into json form
         result = json.dumps({
             'yield_rate': list(machine_yield_rates),
             'min_yield_rate': min_yield_rate['yield_rate__min'] - 0.01,
