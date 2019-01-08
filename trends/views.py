@@ -2,8 +2,7 @@ from django.shortcuts import render
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Max, Min
+from django.db.models import Min
 
 from .forms import *
 
@@ -12,10 +11,12 @@ from estimator.models import Machine_Yield_Rate_History, Maintenance_History
 import datetime
 import json
 
+
 class TrendView(View):
     def get(self, request):
         form = TrendForm()
         return render(request, 'trends/trends-chart.html', {'form': form})
+
 
 @csrf_exempt
 def get_machine_trends_and_maintenance(request):
@@ -69,7 +70,8 @@ def get_machine_trends_and_maintenance(request):
                 if item['check_in_time'].date() >= value['start_period'] and item['check_in_time'].date() <= value['end_period']:
                     occurrence_counter = occurrence_counter + 1
             maintenance_occurrence_dict[loop_counter] = {}
-            maintenance_occurrence_dict[loop_counter]['period'] = value['start_period'].strftime(date_format) + "_" + value['end_period'].strftime(date_format)
+            maintenance_occurrence_dict[loop_counter]['period'] = value['start_period'].strftime(date_format) + "_" + \
+                                                                  value['end_period'].strftime(date_format)
             maintenance_occurrence_dict[loop_counter]['occurrence'] = occurrence_counter
             occurrence_counter = 0
             loop_counter += loop_counter + 1
@@ -82,6 +84,7 @@ def get_machine_trends_and_maintenance(request):
         })
 
         return JsonResponse(result, content_type='application/json', safe=False)
+
 
 @csrf_exempt
 def machine_autocomplete(request):

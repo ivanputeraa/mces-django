@@ -81,7 +81,7 @@
                         var machine = $('#id_machine').val()
                         renderChart(machine, trend_data, maintenance_data, min_yield_rate, max_yield_rate)
 
-                    }, error: function(error) {
+                    }, error: function() {
                         $('#chartContainer').hide()
                         alert("No data found! Please check your input parameters!")
                     }
@@ -91,19 +91,30 @@
 
 
             {# Line chart rendering function #}
-            function renderChart(machine, trend_data = [], maintenance_data = [], min_yield_rate, max_yield_rate) {
+            function renderChart(machine, trend_data = [], maintenance_data = [], min_yield_rate) {
                 var chart = new CanvasJS.Chart("chartContainer", {
                     animationEnabled: true,
                     exportFileName: "Machine Yield Rate and Maintenance Chart (" + machine + ")",  //Give any name accordingly
                     exportEnabled: true,
                     title: {
                         text: "Machine Yield Rate and Maintenance Chart (" + machine + ")",
+                        fontSize: 28,
+                        fontWeight: "normal",
+                        wrap: true
                     },
+                    dataPointWidth: 8,
+                    dataPointMinWidth: 5,
+                    dataPointMaxWidth: 10,
                     axisX: {
-                        labelAngle: 0
+                        labelAutoFit: true,
+                        labelWrap: true,
+                        labelAngle: -80,
+                        labelFontSize: 12,
+                        labelFontWeight: "normal"
                     },
                     axisY: {
                         title: "Estimated Yield Rate",
+                        titleFontSize: 20,
                         lineColor: "#C24642",
                         tickColor: "#C24642",
                         labelFontColor: "#C24642",
@@ -113,10 +124,12 @@
                     },
                     axisY2: {
                         title: "Maintenance Occurrence",
+                        titleFontSize: 20,
                         lineColor: "#2c96ee",
                         tickColor: "#2c96ee",
                         labelFontColor: "#2c96ee",
-                        titleFontColor: "#2c96ee"
+                        titleFontColor: "#2c96ee",
+                        interval:1
                     },
                     toolTip: {
                         shared: true,

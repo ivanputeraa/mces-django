@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, HttpResponse, HttpResponseRedirect, get_object_or_404
+from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import *
 from django.views.decorators.csrf import csrf_exempt
@@ -30,7 +30,7 @@ def analyze_data(request, pk): # Rename from UploadAndAnalyze
         file_path = os.path.join(settings.MEDIA_ROOT, file[0])
 
         # Read the prod data file
-        DataFlow = pd.read_csv(file_path, encoding='big5')
+        DataFlow = pd.read_csv(file_path, encoding='big5', low_memory=False)
 
         # Check whether prod data is the correct one
         if '入庫日期' not in DataFlow.columns.values:
@@ -192,7 +192,7 @@ def file_create(request):
                     reason_list = df['分析 異常/故障原因'].values.copy()
                     replace_parts_list = df['備品需求'].values.copy()
 
-                    for counter in range(0, len(df)):  # Exclude last row
+                    for counter in range(0, len(df) - 1):  # Exclude last row
 
                         # Convert check_in_time and check_out_time into week
                         check_in_time = str(check_in_time_list[counter]).replace('/', '-')
