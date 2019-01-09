@@ -1,6 +1,7 @@
 from django import forms
 from bootstrap_datepicker_plus import DatePickerInput
 
+
 class TrendForm(forms.Form):
 
     REPORT_TYPE_CHOICES = (
