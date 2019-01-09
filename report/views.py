@@ -28,9 +28,11 @@ def download(request):
         df.columns = ['Machine', 'Estimated Yield Rate', 'Bad Pieces', 'Type']
 
         if report_type == 'Cell':
-            file_path = settings.MEDIA_ROOT + 'reports/' + period + '_cell_based_report.csv'
+            file_name = period + '_cell_based_report.csv'
         elif report_type == 'Panel':
-            file_path = settings.MEDIA_ROOT + 'reports/' + period + '_panel_based_report.csv'
+            file_name = period + '_panel_based_report.csv'
+
+        file_path = settings.MEDIA_ROOT + 'reports/' + file_name
 
         # Remove previous report file
         if os.path.exists(file_path):
@@ -50,8 +52,7 @@ def download(request):
 
         # Serve the file
         response = HttpResponse(content, content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=' + period + '.csv'
-
+        response['Content-Disposition'] = 'attachment; filename=' + file_name
         return response
 
 
