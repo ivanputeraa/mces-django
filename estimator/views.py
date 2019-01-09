@@ -97,7 +97,7 @@ class HomeView(View):
 class FileList(ListView):
     model = File
     template_name_suffix = '-list'
-    queryset = File.objects.all().order_by('last_modified')
+    queryset = File.objects.all().order_by('-last_modified')
 
 
 @login_required
