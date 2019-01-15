@@ -24,6 +24,7 @@ class Machine_Yield_Rate_History(models.Model):
     def __str__(self):
         return str("(Week {0}) {1} , yield rate: {3}").format(self.period_in_week, self.machine, self.yield_rate)
 
+
 class HistoryMachineUsage(models.Model):
       Lot = models.TextField()
       Period = models.TextField()
@@ -31,6 +32,7 @@ class HistoryMachineUsage(models.Model):
 
       class Meta:
           db_table = "HistoryMachineUsage"
+
 
 class MachineUsedByLotInformation(models.Model):
     MaterialNumber = models.TextField()
@@ -53,6 +55,7 @@ class MachineUsedByLotInformation(models.Model):
         index_together = ["Period", "Machine"]
 # End of PeiKai's code
 
+
 class GBOM(models.Model):
     gbom = models.TextField(max_length=50, null=True)
     station = models.TextField(max_length=255, null=True)
@@ -68,6 +71,7 @@ class GBOM(models.Model):
     def __str__(self):
         return self.gbom
 
+
 class LOT(models.Model):
     LOT = models.CharField(max_length=50)
     GBOM = models.CharField(max_length=50)
@@ -75,6 +79,7 @@ class LOT(models.Model):
     class Meta:
         verbose_name_plural = 'LOT'
         verbose_name = 'LOT'
+
 
 class Machine(models.Model):
     machine = models.CharField(max_length=6)
@@ -85,9 +90,11 @@ class Machine(models.Model):
     def __str__(self):
         return self.machine
 
+
 # ALTER TABLE estimator_maintenance_history CONVERT TO CHARACTER SET big5 COLLATE big5_chinese_ci;
 class Maintenance_History(models.Model):
     machine = models.TextField(max_length=6)
+    serial_number = models.TextField(max_length=15, null=True)
     check_in_time = models.DateTimeField(default=timezone.now)
     check_out_time = models.DateTimeField(default=timezone.now)
     employee_id = models.TextField(max_length=5)
@@ -115,6 +122,7 @@ class Employee(models.Model):
 
     def __str__(self):
         return self.name
+
 
 # Uploaded file directory path
 def user_directory_path(instance, filename):
@@ -184,6 +192,7 @@ class Production_Data_By_Time(models.Model):
         return self.part_number
 #     Fill missing fields here...
 
+
 class Production_Data_By_Warehouse(models.Model):
     part_number = models.TextField(max_length=255, null=True)
     check_in_time = models.DateTimeField(null=True)
@@ -201,6 +210,7 @@ class Production_Data_By_Warehouse(models.Model):
     def __str__(self):
         return self.part_number
 
+
 class Bad_Phenomenon_By_Time(models.Model):
     lot_number = models.TextField(max_length=255, null=True)
     check_in_time = models.TextField(max_length=255,null=True)
@@ -213,6 +223,7 @@ class Bad_Phenomenon_By_Time(models.Model):
 
     def __str__(self):
         return self.lot_name
+
 
 class Bad_Phenomenon_By_Warehouse(models.Model):
     lot_number = models.TextField(max_length=255, null=True)

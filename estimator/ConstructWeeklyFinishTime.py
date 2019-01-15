@@ -124,6 +124,9 @@ def GetWeeklyFinishDateDict():
     WeeklyFinishDateList20181210_20181216 = ["2018/12/10", "2018/12/11", "2018/12/12", "2018/12/13", "2018/12/14",
                                              "2018/12/15", "2018/12/16"]
     WeeklyFinishDateDict["20181210_20181216"] = WeeklyFinishDateList20181210_20181216[:]
+    WeeklyFinishDateList20181217_20181223 = ["2018/12/17", "2018/12/18", "2018/12/19", "2018/12/20", "2018/12/21",
+                                             "2018/12/22", "2018/12/23"]
+    WeeklyFinishDateDict["20181217_20181223"] = WeeklyFinishDateList20181217_20181223[:]
     return WeeklyFinishDateDict
 
 if __name__ == "__main__":

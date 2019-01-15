@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import *
@@ -80,6 +81,7 @@ def analyze_data(request, pk): # Rename from UploadAndAnalyze
             response.status_code = 200
         return response
 
+
 class IndexView(View):
     def get(self, request):
         if not request.user.is_authenticated:
@@ -96,8 +98,17 @@ class HomeView(View):
 # BEGIN File Upload Views
 class FileList(ListView):
     model = File
+    #paginate_by = 10
     template_name_suffix = '-list'
-    queryset = File.objects.all().order_by('-last_modified')
+    file_list = File.objects.all().order_by('-last_modified')
+
+    #def listing(request):
+
+    #paginator = Paginator(file_list)
+
+    #page = request.GET.get('page')
+    #page_obj = paginator.get_page(page)
+    #return render(request, 'estimator/file-list.html', {'file_list': page_obj})
 
 
 @login_required
@@ -178,7 +189,12 @@ def file_create(request):
                                    extra_tags='alert')
                     return render(request, 'estimator/file-create.html', {'form': form})
                 else:
+                    # Delete previous maintenance history data
+                    Maintenance_History.objects.all().delete()
+                    File.objects.filter(type=2).delete()
+
                     machine_list = df['設備代碼'].values.copy()
+                    serial_number_list = df['流水號'].values.copy()
                     check_in_time_list = df['CHECK IN TIME'].values.copy()
                     check_out_time_list = df['CHECK OUT TIME'].values.copy()
                     employee_id_list = df['員工代碼'].values.copy()
@@ -193,15 +209,11 @@ def file_create(request):
                     replace_parts_list = df['備品需求'].values.copy()
 
                     for counter in range(0, len(df) - 1):  # Exclude last row
-
-                        # Convert check_in_time and check_out_time into week
-                        check_in_time = str(check_in_time_list[counter]).replace('/', '-')
-                        check_out_time = str(check_out_time_list[counter]).replace('/', '-')
-
                         instance = Maintenance_History(
                             machine=str(machine_list[counter]),
-                            check_in_time=check_in_time,
-                            check_out_time=check_out_time,
+                            serial_number=str(serial_number_list[counter]),
+                            check_in_time=str(check_in_time_list[counter]).replace('/', '-'),
+                            check_out_time=str(check_out_time_list[counter]).replace('/', '-'),
                             employee_id=str(employee_id_list[counter]).replace('.0', ''),
                             operation_class=str(operation_class_list[counter]),
                             major_code=str(major_code_list[counter]),
@@ -215,7 +227,6 @@ def file_create(request):
                         )
                         instances.append(instance)
                     Maintenance_History.objects.bulk_create(instances)
-
             if file_type == 3:
                 if 'DEFECT CATEGORY' not in df.columns.values:
                     messages.error(request,
@@ -286,7 +297,7 @@ def file_create(request):
             return HttpResponseRedirect(reverse('estimator:file-list'))
         else:
             messages.warning(request, 'Please correct the error below.')
-    else: # request.method == 'GET':
+    else:  # request.method == 'GET':
         form = FileForm()
     return render(request, 'estimator/file-create.html', {'form': form})
 
@@ -330,7 +341,6 @@ class ProductionDataQuery(View):
         return render(request, 'estimator/production-data-query.html', {'form': form})
 
 
-
 @csrf_exempt
 def query_production_data(request):
     if request.is_ajax():
@@ -346,5 +356,5 @@ def query_production_data(request):
     #istekler = Machine.objects.all()
     #return render(request, 'estimator/production-data-query.html', locals())
 
-        # Perform query here...
+    # Perform query here...
 # Create LOT and GBOM autocomplete here also...
