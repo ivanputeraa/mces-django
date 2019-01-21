@@ -100,7 +100,10 @@ class FileList(ListView):
     model = File
     #paginate_by = 10
     template_name_suffix = '-list'
+    paginate_by = 10
     file_list = File.objects.all().order_by('-last_modified')
+
+
 
     #def listing(request):
 

@@ -7,7 +7,7 @@
 {% block content %}
     <h1 class="mt-5">File List</h1>
 
-    <a href="{% url 'estimator:file-create' %}" class="btn btn-primary pull-right">Upload File</a>
+    <a href="{% url 'estimator:file-create' %}" class="btn btn-primary float-right">Upload File</a>
     <br><br>
     <table class="table table-hover">
         <thead>
@@ -67,8 +67,29 @@
             {% endfor %}
         {% endif %}
     </table>
-
-
+    {% if is_paginated %}
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+              {% if page_obj.has_previous %}
+                  <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+              {% else %}
+                  <li class="page-item disabled"><a class="page-link" href="#"><span>Previous</span></a></li>
+              {% endif %}
+              {% for i in paginator.page_range %}
+              {% if page_obj.number == i %}
+                  <li class="page-item active"><a class="page-link" href="#">{{ i }} <span class="sr-only">(current)</span></a></li>
+              {% else %}
+                  <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+              {% endif %}
+              {% endfor %}
+              {% if page_obj.has_next %}
+                  <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+              {% else %}
+                  <li class="page-item disabled"><a class="page-link" href="#"><span>Next</span></a></li>
+              {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
 {% endblock %}
 
 {% block javascript %}
